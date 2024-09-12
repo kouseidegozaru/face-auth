@@ -153,9 +153,9 @@ REST_AUTH_REGISTER_SERIALIZERS = {
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  # メール認証を必須にする
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
-# カスタムユーザーモデルでユーザー名を使わない
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None
-ACCOUNT_USERNAME_REQUIRED = False
+# カスタムユーザーモデルのユーザー名紐づけ
+ACCOUNT_USER_MODEL_USERNAME_FIELD = 'name'
+ACCOUNT_USERNAME_REQUIRED = True
 
 # メール送信の設定 (ここに実際のメールサーバー設定を記載)
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
