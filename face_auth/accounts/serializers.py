@@ -1,5 +1,6 @@
 from dj_rest_auth.registration.serializers import RegisterSerializer
 from dj_rest_auth.registration.views import get_adapter
+from dj_rest_auth.serializers import LoginSerializer
 from rest_framework import serializers
 from .models import User
 
@@ -34,3 +35,7 @@ class CustomRegisterSerializer(RegisterSerializer):
         adapter.save_user(request, user, self)
         
         return user
+
+class CustomLoginSerializer(LoginSerializer):
+
+    username = None
