@@ -158,7 +158,7 @@ ACCOUNT_EMAIL_VERIFICATION = 'mandatory'  # メール認証を必須にする
 ACCOUNT_AUTHENTICATION_METHOD = 'email'
 ACCOUNT_EMAIL_REQUIRED = True
 # カスタムユーザーモデルのユーザー名紐づけ
-ACCOUNT_USER_MODEL_USERNAME_FIELD = None
+ACCOUNT_USER_MODEL_USERNAME_FIELD = 'name'
 ACCOUNT_USERNAME_REQUIRED = False
 
 # メール送信の設定 (ここに実際のメールサーバー設定を記載)
