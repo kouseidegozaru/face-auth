@@ -172,3 +172,6 @@ DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 
 #カスタムユーザー設定
 AUTH_USER_MODEL = 'accounts.User'
+
+#メール認証後のリダイレクト先URL(フロントエンドのURLを指定)
+VERIFY_EMAIL_REDIRECT_URL = '/users/login/'#テスト用リダイレクト先
