@@ -1,16 +1,30 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
-from .views import TrainingGroupViewSet
+from django.urls import path
+from .views import TrainingGroupViewSet, TrainingDataViewSet
 
-# ルーターを作成
-router = DefaultRouter()
+training_group_list = TrainingGroupViewSet.as_view({
+    'get': 'list',      # GET: /training-groups/ - TrainingGroup一覧
+    'post': 'create',   # POST: /training-groups/ - TrainingGroup作成
+})
 
-router.register(r'training-groups', TrainingGroupViewSet, basename='traininggroup')
-# GET: /training-groups/ ログイン済みユーザーのTrainingGroup一覧
-# POST: /training-groups/ ログイン済みユーザーのTrainingGroup作成
-# PATCH: /training-groups/<int:pk>/ ログイン済みユーザーのTrainingGroup更新
-# DELETE: /training-groups/<int:pk>/ ログイン済みユーザーのTrainingGroup削除
+training_group_detail = TrainingGroupViewSet.as_view({
+    'get': 'retrieve',   # GET: /training-groups/<uuid:pk>/ - 特定のTrainingGroupのTrainingData一覧
+    'patch': 'update',   # PATCH: /training-groups/<uuid:pk>/ - TrainingGroup更新
+    'delete': 'destroy', # DELETE: /training-groups/<uuid:pk>/ - TrainingGroup削除
+})
+
+training_data_detail = TrainingDataViewSet.as_view({
+    'get': 'retrieve',   # GET: /training-data/<uuid:pk>/ - 特定のTrainingData
+    'patch': 'update',   # PATCH: /training-data/<uuid:pk>/ - TrainingData更新
+    'delete': 'destroy', # DELETE: /training-data/<uuid:pk>/ - TrainingData削除
+})
+
+training_data_create = TrainingDataViewSet.as_view({
+    'post': 'create',    # POST: /training-data/<uuid:group_pk>/ - TrainingData作成
+})
 
 urlpatterns = [
-    path('', include(router.urls)),  # ルーターのURLを含める
+    path('training-groups/', training_group_list, name='training-group-list'),                  # GET, POST
+    path('training-groups/<uuid:pk>/', training_group_detail, name='training-group-detail'),    # GET, PATCH, DELETE
+    path('training-data/<uuid:pk>/', training_data_detail, name='training-data-detail'),        # GET, PATCH, DELETE
+    path('training-data/<uuid:group_pk>/', training_data_create, name='training-data-create'),  # POST
 ]
