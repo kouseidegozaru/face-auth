@@ -24,8 +24,8 @@ class TrainingData(models.Model):
 
 
 # 特徴量ファイルの保存先
-def get_feature_upload_to(self,group_id):
-    return f'feature/{group_id}'
+def get_feature_upload_to(self, filename):
+    return f'feature/{self.group.user.id}/{filename}'
 
 class FeatureFiles(models.Model):
     group = models.OneToOneField(TrainingGroup, on_delete=models.CASCADE)
