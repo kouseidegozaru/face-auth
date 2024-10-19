@@ -19,9 +19,16 @@ class TrainingGroupViewSet(viewsets.ViewSet):
 
     def retrieve(self, request, pk=None):
         """
-        retrieveメソッドはサポートされないため405エラーを返す
+        特定のTrainingGroupのTrainingDataを取得
+        グループのオーナーが現在のユーザーでない場合は404エラー
         """
-        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+        try:
+            instance = TrainingData.objects.get(group__id=pk, group__owner=self.request.user)
+            serializer = TrainingDataSerializer(instance)
+            return Response(serializer.data)
+        except TrainingData.DoesNotExist:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+
 
     def create(self, request):
         """
@@ -88,13 +95,13 @@ class TrainingDataViewSet(viewsets.ViewSet):
         グループのオーナーが現在のユーザーでない場合は404エラー
         """
         try:
-            instance = TrainingData.objects.get(group__id=pk, group__owner=self.request.user)
+            instance = TrainingData.objects.get(id=pk, group__owner=self.request.user)
             serializer = TrainingDataSerializer(instance)
             return Response(serializer.data)
         except TrainingData.DoesNotExist:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
-    def create(self, request):
+    def create(self, request,group_pk=None):
         """
         新しいTrainingDataを作成
         グループのオーナーが現在のユーザーでない場合は403エラー
@@ -103,7 +110,7 @@ class TrainingDataViewSet(viewsets.ViewSet):
         serializer.is_valid(raise_exception=True)
 
         # グループのオーナーが現在のユーザーか確認
-        group = serializer.validated_data.get('group')
+        group = TrainingGroup.objects.get(pk=group_pk)
         if group.owner != request.user:
             return Response({"detail": "You do not have permission to create training data for this group."}, status=status.HTTP_403_FORBIDDEN)
 
