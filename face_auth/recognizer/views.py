@@ -5,82 +5,146 @@ from .models import TrainingGroup, TrainingData
 from .serializers import TrainingGroupSerializer, TrainingDataSerializer
 
 
-class TrainingGroupViewSet(viewsets.ModelViewSet):
-    queryset = TrainingGroup.objects.all()
-    serializer_class = TrainingGroupSerializer
-    permission_classes = [IsAuthenticated]  # 認証済みのユーザーのみアクセス可能
+class TrainingGroupViewSet(viewsets.ViewSet):
+    # 認証済みのユーザーのみアクセス可能
+    permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        # 現在のユーザーがオーナーのTrainingGroupのみを取得
-        return TrainingGroup.objects.filter(owner=self.request.user)
+    def list(self, request):
+        """
+        現在のユーザーがオーナーのTrainingGroupをリストとして返す
+        """
+        queryset = TrainingGroup.objects.filter(owner=self.request.user)
+        serializer = TrainingGroupSerializer(queryset, many=True)
+        return Response(serializer.data)
 
-    def perform_create(self, serializer):
-        # 新しいTrainingGroupのオーナーを現在のユーザーに設定
-        serializer.save(owner=self.request.user)
+    def retrieve(self, request, pk=None):
+        """
+        retrieveメソッドはサポートされないため405エラーを返す
+        """
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
 
-    def update(self, request, *args, **kwargs):
-        # 部分更新を許可
+    def create(self, request):
+        """
+        新しいTrainingGroupを作成し、オーナーを現在のユーザーに設定
+        """
+        serializer = TrainingGroupSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save(owner=request.user)  # オーナーを設定して保存
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, pk=None):
+        """
+        TrainingGroupの更新処理
+        PATCHメソッドの場合は部分更新
+        """
         partial = request.method == 'PATCH'
-        
-        # 現在のユーザーがオーナーであることを確認
-        instance = self.get_object()
+        instance = self.get_object(pk)
+
+        # 現在のユーザーがオーナーでない場合、403エラー
         if instance.owner != request.user:
             return Response({"detail": "You do not have permission to edit this group."}, status=status.HTTP_403_FORBIDDEN)
-        
-        # ownerの更新を防ぐために、オーバーライド
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
 
-        self.perform_update(serializer)
+        serializer = TrainingGroupSerializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         return Response(serializer.data)
 
-    def destroy(self, request, *args, **kwargs):
-        # 現在のユーザーがオーナーであることを確認
-        instance = self.get_object()
+    def destroy(self, request, pk=None):
+        """
+        TrainingGroupの削除処理
+        現在のユーザーがオーナーでない場合、403エラー
+        """
+        instance = self.get_object(pk)
         if instance.owner != request.user:
             return Response({"detail": "You do not have permission to delete this group."}, status=status.HTTP_403_FORBIDDEN)
-        
-        self.perform_destroy(instance)
+
+        instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+    def get_object(self, pk):
+        """
+        特定のTrainingGroupを取得
+        存在しない場合やオーナーが異なる場合は404エラー
+        """
+        try:
+            return TrainingGroup.objects.get(pk=pk, owner=self.request.user)
+        except TrainingGroup.DoesNotExist:
+            raise Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
 
-class TrainingDataViewSet(viewsets.ModelViewSet):
-    queryset = TrainingData.objects.all()
-    serializer_class = TrainingDataSerializer
-    permission_classes = [IsAuthenticated]  # 認証済みのユーザーのみアクセス可能
 
-    def get_queryset(self):
-        # 現在のユーザーがオーナーのTrainingDataのみを取得
-        return TrainingData.objects.filter(group__owner=self.request.user)
-    
-    def perform_create(self, serializer):
-        # TrainingDataを作成する際に、グループのオーナーが現在のユーザーであることを確認
-        group = serializer.validated_data.get('group')  # リクエストからグループを取得
-        if group.owner != self.request.user:
-            return Response({"detail": "You do not have permission to create training data for this group."}, status=status.HTTP_403_FORBIDDEN)
-        serializer.save()
+class TrainingDataViewSet(viewsets.ViewSet):
+    # 認証済みのユーザーのみアクセス可能
+    permission_classes = [IsAuthenticated]
 
-    def update(self, request, *args, **kwargs):
-        # 部分更新を許可
-        partial = request.method == 'PATCH'
-        
-        # 現在のユーザーがオーナーであることを確認
-        instance = self.get_object()
-        if instance.group.owner != request.user:
-            return Response({"detail": "You do not have permission to edit this training data."}, status=status.HTTP_403_FORBIDDEN)
-        
-        # groupの更新を防ぐために、オーバーライド
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+    def list(self, request):
+        """
+        listメソッドはサポートされないため405エラーを返す
+        """
+        return Response(status=status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    def retrieve(self, request, pk=None):
+        """
+        特定のTrainingDataを取得
+        グループのオーナーが現在のユーザーでない場合は404エラー
+        """
+        try:
+            instance = TrainingData.objects.get(group__id=pk, group__owner=self.request.user)
+            serializer = TrainingDataSerializer(instance)
+            return Response(serializer.data)
+        except TrainingData.DoesNotExist:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+
+    def create(self, request):
+        """
+        新しいTrainingDataを作成
+        グループのオーナーが現在のユーザーでない場合は403エラー
+        """
+        serializer = TrainingDataSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
-        self.perform_update(serializer)
+        # グループのオーナーが現在のユーザーか確認
+        group = serializer.validated_data.get('group')
+        if group.owner != request.user:
+            return Response({"detail": "You do not have permission to create training data for this group."}, status=status.HTTP_403_FORBIDDEN)
+
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, pk=None):
+        """
+        TrainingDataの更新処理
+        PATCHメソッドの場合は部分更新
+        """
+        partial = request.method == 'PATCH'
+        instance = self.get_object(pk)
+
+        # グループのオーナーが現在のユーザーでない場合は403エラー
+        if instance.group.owner != request.user:
+            return Response({"detail": "You do not have permission to edit this training data."}, status=status.HTTP_403_FORBIDDEN)
+
+        serializer = TrainingDataSerializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
         return Response(serializer.data)
 
-    def destroy(self, request, *args, **kwargs):
-        # 現在のユーザーがオーナーであることを確認
-        instance = self.get_object()
+    def destroy(self, request, pk=None):
+        """
+        TrainingDataの削除処理
+        グループのオーナーが現在のユーザーでない場合は403エラー
+        """
+        instance = self.get_object(pk)
         if instance.group.owner != request.user:
             return Response({"detail": "You do not have permission to delete this training data."}, status=status.HTTP_403_FORBIDDEN)
-        
-        self.perform_destroy(instance)
+
+        instance.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
+
+    def get_object(self, pk):
+        """
+        特定のTrainingDataを取得
+        存在しない場合やオーナーが異なる場合は404エラー
+        """
+        try:
+            return TrainingData.objects.get(pk=pk, group__owner=self.request.user)
+        except TrainingData.DoesNotExist:
+            raise Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
