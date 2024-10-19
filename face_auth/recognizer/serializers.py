@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import TrainingGroup
+from .models import TrainingGroup, TrainingData
 
 class TrainingGroupSerializer(serializers.ModelSerializer):
     class Meta:
@@ -10,4 +10,16 @@ class TrainingGroupSerializer(serializers.ModelSerializer):
         def update(self, instance, validated_data):
             # ownerの更新を無効にするため、validated_dataからownerを削除
             validated_data.pop('owner', None)  # ownerが含まれていても無視
+            return super().update(instance, validated_data)
+        
+
+class TrainingDataSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TrainingData
+        fields = ['id', 'group', 'image', 'label', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']
+
+        def update(self, instance, validated_data):
+            # groupの更新を無効にするため、validated_dataからgroupを削除
+            validated_data.pop('group', None)  # groupが含まれていても無視
             return super().update(instance, validated_data)
