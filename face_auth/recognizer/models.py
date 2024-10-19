@@ -8,3 +8,16 @@ class TrainingGroup(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     created_at = models.DateTimeField(verbose_name='作成日', auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='更新日', auto_now=True)
+
+
+# 画像ファイルの保存先
+def get_upload_to(self, filename):
+    return f'recognizer/{self.group.id}/{filename}'
+    
+class TrainingData(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    group = models.ForeignKey(TrainingGroup, on_delete=models.CASCADE)
+    image = models.ImageField(verbose_name='画像', upload_to=get_upload_to)
+    label = models.CharField(verbose_name='ラベル', max_length=100)
+    created_at = models.DateTimeField(verbose_name='作成日', auto_now_add=True)
+    updated_at = models.DateTimeField(verbose_name='更新日', auto_now=True)
