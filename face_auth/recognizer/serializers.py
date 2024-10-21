@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import TrainingGroup, TrainingData
+from .models import TrainingGroup, TrainingData, FeatureFiles
 
 class TrainingGroupSerializer(serializers.ModelSerializer):
     class Meta:
@@ -23,3 +23,11 @@ class TrainingDataSerializer(serializers.ModelSerializer):
             # groupの更新を無効にするため、validated_dataからgroupを削除
             validated_data.pop('group', None)  # groupが含まれていても無視
             return super().update(instance, validated_data)
+        
+
+class FeatureFilesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FeatureFiles
+        fields = ['id', 'group', 'feature', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'created_at', 'updated_at']
+        
