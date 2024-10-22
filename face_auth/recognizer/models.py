@@ -30,5 +30,6 @@ def get_feature_upload_to(self, filename):
 class FeatureFiles(models.Model):
     group = models.OneToOneField(TrainingGroup, on_delete=models.CASCADE)
     feature = models.FileField(verbose_name='特徴量ファイル', upload_to=get_feature_upload_to)
+    labels = models.FileField(verbose_name='ラベルファイル', upload_to=get_feature_upload_to)
     created_at = models.DateTimeField(verbose_name='作成日', auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='更新日', auto_now=True)
