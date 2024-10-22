@@ -4,17 +4,17 @@ import face_recognition
 
 from .types import LearningDataSet
 from ..tools.image_operations import open_image
+from .feature_models import FeatureModel
 
 
-def learning(data_set: LearningDataSet) -> tuple[NearestNeighbors, list[str]]:
+def learning(data_set: LearningDataSet) -> FeatureModel:
     """学習を実行する
 
     Args:
         data_set (LearningDataSet): 学習に必要なデータのリスト
 
     Returns:
-        NearestNeighbors: 学習済みのモデル
-        list[str]: 学習対象のラベルのリスト
+        FeatureModel: 学習後の特徴モデル
     """
     
     # ラベルの取得
@@ -34,7 +34,8 @@ def learning(data_set: LearningDataSet) -> tuple[NearestNeighbors, list[str]]:
     model = NearestNeighbors(n_neighbors=1)
     model.fit(face_features)
 
-    return model, labels
+    # 学習後の特徴モデルを返す
+    return FeatureModel(model, labels)
 
 
 def detect_face(image: np.ndarray) -> np.ndarray:
