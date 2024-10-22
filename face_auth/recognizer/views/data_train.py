@@ -7,7 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from ..models import TrainingGroup
 from .logic import feature_training
 
-class Train(APIView):
+class TrainView(APIView):
     # 認証済みのユーザーのみアクセス可能
     permission_classes = [IsAuthenticated]
 
