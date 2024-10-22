@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import TrainingGroupViewSet, TrainingDataViewSet
+from .views.data_requests import TrainingGroupViewSet, TrainingDataViewSet
 
 training_group_list = TrainingGroupViewSet.as_view({
     'get': 'list',      # GET: /training-groups/ - TrainingGroup一覧

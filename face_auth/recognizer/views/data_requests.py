@@ -1,8 +1,8 @@
 from rest_framework import viewsets, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
-from .models import TrainingGroup, TrainingData
-from .serializers import TrainingGroupSerializer, TrainingDataSerializer
+from ..models import TrainingGroup, TrainingData
+from ..serializers import TrainingGroupSerializer, TrainingDataSerializer
 
 
 class TrainingGroupViewSet(viewsets.ViewSet):
