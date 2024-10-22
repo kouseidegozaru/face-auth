@@ -1,5 +1,6 @@
 from django.urls import path
 from .views.data_requests import TrainingGroupViewSet, TrainingDataViewSet
+from .views.data_train import TrainView
 
 training_group_list = TrainingGroupViewSet.as_view({
     'get': 'list',      # GET: /training-groups/ - TrainingGroup一覧
@@ -27,4 +28,5 @@ urlpatterns = [
     path('training-groups/<uuid:pk>/', training_group_detail, name='training-group-detail'),    # GET, PATCH, DELETE
     path('training-data/<uuid:pk>/', training_data_detail, name='training-data-detail'),        # GET, PATCH, DELETE
     path('training-data/<uuid:group_pk>/', training_data_create, name='training-data-create'),  # POST
+    path('train/<uuid:pk>/', TrainView.as_view(), name='train'),                                # POST
 ]
