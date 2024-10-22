@@ -23,12 +23,8 @@ class TrainingData(models.Model):
     updated_at = models.DateTimeField(verbose_name='更新日', auto_now=True)
 
 
-# 特徴量ファイルの保存先
-def get_feature_upload_to(self, filename):
-    return f'feature/{self.group.user.id}/{filename}'
-
-class FeatureFiles(models.Model):
+class FeatureData(models.Model):
     group = models.OneToOneField(TrainingGroup, on_delete=models.CASCADE)
-    feature = models.FileField(verbose_name='特徴量ファイル', upload_to=get_feature_upload_to)
+    feature = models.BinaryField(verbose_name='特徴量')
     created_at = models.DateTimeField(verbose_name='作成日', auto_now_add=True)
     updated_at = models.DateTimeField(verbose_name='更新日', auto_now=True)
