@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import TrainingGroup, TrainingData, FeatureFiles
+from .models import TrainingGroup, TrainingData, FeatureData
 
 class TrainingGroupSerializer(serializers.ModelSerializer):
     class Meta:
@@ -25,9 +25,9 @@ class TrainingDataSerializer(serializers.ModelSerializer):
             return super().update(instance, validated_data)
         
 
-class FeatureFilesSerializer(serializers.ModelSerializer):
+class FeatureDataSerializer(serializers.ModelSerializer):
     class Meta:
-        model = FeatureFiles
+        model = FeatureData
         fields = ['id', 'group', 'feature', 'created_at', 'updated_at']
         read_only_fields = ['id', 'created_at', 'updated_at']
         
