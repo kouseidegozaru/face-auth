@@ -86,3 +86,18 @@ def extract_face_feature(face_image: np.ndarray) -> np.ndarray:
         return face_encoding[0]
     else:
         return None
+
+
+def predict_feature(feature_model: FeatureModel, face_image: np.ndarray) -> str:
+    """
+    入力された特徴モデルと顔画像から、顔画像に対する顔特徴を推定して返す
+
+    Args:
+        feature_model (FeatureModel): 特徴モデル
+        face_image (np.ndarray): 顔画像
+
+    Returns:
+        str: 顔画像に対する顔特徴
+    """
+    face_feature = extract_face_feature(face_image)
+    return feature_model.predict(face_feature)

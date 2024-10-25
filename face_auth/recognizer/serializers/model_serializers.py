@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import TrainingGroup, TrainingData, FeatureData
+from ..models import TrainingGroup, TrainingData, FeatureData
 
 class TrainingGroupSerializer(serializers.ModelSerializer):
     class Meta:
