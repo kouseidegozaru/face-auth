@@ -4,6 +4,13 @@ import uuid
 from ..services.validations import is_exist_face
 from ..services.tools import open_image
 
+class TrainSerializer(serializers.Serializer):
+    pk = serializers.UUIDField()  # pkはURLパラメータを想定
+
+    def validate(self, data):
+         return data
+
+
 class PredictSerializer(serializers.Serializer):
     pk = serializers.UUIDField()  # pkはURLパラメータを想定
     image = serializers.ImageField()
