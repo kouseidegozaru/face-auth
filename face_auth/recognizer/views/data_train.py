@@ -6,7 +6,7 @@ from rest_framework.permissions import IsAuthenticated
 
 from ..models import TrainingGroup
 from .logic import feature_training,feature_predict
-from ..serializers import PredictSerializer
+from ..serializers import TrainSerializer, PredictSerializer
 from ..services.tools import open_image
 
 class TrainView(APIView):
@@ -14,6 +14,12 @@ class TrainView(APIView):
     permission_classes = [IsAuthenticated]
 
     def post(self, request, pk):
+        # シリアライザーの初期化とバリデーション
+        serializer = TrainSerializer(data={**request.data, 'pk': pk})
+        if not serializer.is_valid():
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # トレーニンググループの取得
         group = get_object_or_404(TrainingGroup, pk=pk)
 
         # オーナーの確認
