@@ -1,6 +1,6 @@
-from ...models import TrainingGroup, FeatureData
-from ...services.learning import predict_feature
-from ...services.learning.feature_models import FeatureModel, FeatureModelStorage
+from ..models import TrainingGroup, FeatureData
+from ..services.recognize import predict_feature
+from ..services.recognize.feature_models import FeatureModel, FeatureModelStorage
 
 import numpy as np
 

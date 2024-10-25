@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
 from ..models import TrainingGroup
-from .logic import feature_training,feature_predict
+from ..repository import feature_training,feature_predict
 from ..serializers import TrainSerializer, PredictSerializer
 from ..services.tools import open_image
 

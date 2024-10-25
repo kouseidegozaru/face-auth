@@ -1,6 +1,6 @@
-from ...models import TrainingGroup, FeatureData
-from ...services.learning import create_training_data_set, learning
-from ...services.learning.feature_models import FeatureModel, FeatureModelStorage
+from ..models import TrainingGroup, FeatureData
+from ..services.recognize import create_training_data_set, learning
+from ..services.recognize.feature_models import FeatureModel, FeatureModelStorage
 
 
 """
