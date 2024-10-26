@@ -53,6 +53,10 @@ class PredictView(APIView):
         if group.owner != request.user:
             return Response({"detail": "You do not have permission to predict this group."}, status=status.HTTP_403_FORBIDDEN)
 
+        # 特徴モデルが存在するか確認
+        if not group.feature_model:
+            return Response({"detail": "Feature model does not exist."}, status=status.HTTP_404_NOT_FOUND)
+        
         # 画像の読み込み
         image_data = open_image(serializer.validated_data['image'])
         # 特徴モデルの読み込み
