@@ -27,6 +27,10 @@ class TrainView(APIView):
         if group.owner != request.user:
             return Response({"detail": "You do not have permission to train this group."}, status=status.HTTP_403_FORBIDDEN)
 
+        # グループに画像ファイルが2種類以上あるか
+        if group.images.count() < 2:
+            return Response({"detail": "You must upload at least two images to train this group."}, status=status.HTTP_400_BAD_REQUEST)
+
         # データセットの作成
         dataset = create_training_data_set(group.id)
         # 学習
