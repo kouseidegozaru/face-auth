@@ -22,15 +22,6 @@ class TrainView(APIView):
 
         # トレーニンググループの取得
         group = get_object_or_404(TrainingGroup, pk=pk)
-
-        # オーナーの確認
-        if group.owner != request.user:
-            return Response({"detail": "You do not have permission to train this group."}, status=status.HTTP_403_FORBIDDEN)
-
-        # グループに画像ファイルが2種類以上あるか
-        if group.images.count() < 2:
-            return Response({"detail": "You must upload at least two images to train this group."}, status=status.HTTP_400_BAD_REQUEST)
-
         # データセットの作成
         dataset = create_training_data_set(group.id)
         # 学習
@@ -51,16 +42,7 @@ class PredictView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # トレーニンググループの取得
-        group = get_object_or_404(TrainingGroup, pk=pk)
-
-        # オーナーの確認
-        if group.owner != request.user:
-            return Response({"detail": "You do not have permission to predict this group."}, status=status.HTTP_403_FORBIDDEN)
-
-        # 特徴モデルが存在するか確認
-        if not group.feature_model:
-            return Response({"detail": "Feature model does not exist."}, status=status.HTTP_404_NOT_FOUND)
-        
+        group = get_object_or_404(TrainingGroup, pk=pk)  
         # 画像の読み込み
         image_data = open_image(serializer.validated_data['image'])
         # 特徴モデルの読み込み
