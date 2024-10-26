@@ -3,7 +3,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from ..models import TrainingGroup, TrainingData
 from ..serializers.models_serializers import TrainingGroupSerializer, TrainingDataSerializer
-
+from ..services.validations import is_exist_face
+from ..services.tools import open_image
 
 class TrainingGroupViewSet(viewsets.ViewSet):
     # 認証済みのユーザーのみアクセス可能
@@ -114,6 +115,10 @@ class TrainingDataViewSet(viewsets.ViewSet):
         if group.owner != request.user:
             return Response({"detail": "You do not have permission to create training data for this group."}, status=status.HTTP_403_FORBIDDEN)
 
+        # 顔を検出していない場合は404エラー
+        if not is_exist_face(open_image(request.data['image'])):
+            return Response({"detail": "Face not found."}, status=status.HTTP_404_NOT_FOUND)
+
         serializer.save()
         return Response(serializer.data, status=status.HTTP_201_CREATED)
 
@@ -131,6 +136,11 @@ class TrainingDataViewSet(viewsets.ViewSet):
 
         serializer = TrainingDataSerializer(instance, data=request.data, partial=partial)
         serializer.is_valid(raise_exception=True)
+        
+        # 顔を検出していない場合は404エラー
+        if not is_exist_face(open_image(instance.image)):
+            return Response({"detail": "Face not found."}, status=status.HTTP_404_NOT_FOUND)
+        
         serializer.save()
         return Response(serializer.data)
 

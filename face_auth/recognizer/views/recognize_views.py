@@ -22,11 +22,6 @@ class TrainView(APIView):
 
         # トレーニンググループの取得
         group = get_object_or_404(TrainingGroup, pk=pk)
-
-        # オーナーの確認
-        if group.owner != request.user:
-            return Response({"detail": "You do not have permission to train this group."}, status=status.HTTP_403_FORBIDDEN)
-
         # データセットの作成
         dataset = create_training_data_set(group.id)
         # 学習
@@ -47,12 +42,7 @@ class PredictView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # トレーニンググループの取得
-        group = get_object_or_404(TrainingGroup, pk=pk)
-
-        # オーナーの確認
-        if group.owner != request.user:
-            return Response({"detail": "You do not have permission to predict this group."}, status=status.HTTP_403_FORBIDDEN)
-
+        group = get_object_or_404(TrainingGroup, pk=pk)  
         # 画像の読み込み
         image_data = open_image(serializer.validated_data['image'])
         # 特徴モデルの読み込み
