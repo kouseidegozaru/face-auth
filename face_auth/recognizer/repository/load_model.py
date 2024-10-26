@@ -1,8 +1,5 @@
-from ...models import TrainingGroup, FeatureData
-from ...services.learning import predict_feature
-from ...services.learning.feature_models import FeatureModel, FeatureModelStorage
-
-import numpy as np
+from ..models import TrainingGroup, FeatureData
+from ..services.recognize.feature_models import FeatureModel, FeatureModelStorage
 
 """
 特徴モデルの読み込み
@@ -14,7 +11,7 @@ def feature_model_from_binary(model_binary: bytes) -> FeatureModel:
     feature_model.set_binary_feature(model_binary)
     return feature_model.get()
 
-def feature_predict(training_group_id: int, image : np.ndarray) -> str:
+def load_feature_model(training_group_id: int) -> FeatureModel:
 
     # 学習するグループ
     training_group = TrainingGroup.objects.get(id=training_group_id)
@@ -22,7 +19,5 @@ def feature_predict(training_group_id: int, image : np.ndarray) -> str:
     feature_model_binary = FeatureData.objects.get(group=training_group).feature
     # 特徴モデルを復元
     feature_model = feature_model_from_binary(feature_model_binary)
-    # 推論
-    result_label = predict_feature(feature_model, image)
     
-    return result_label
+    return feature_model

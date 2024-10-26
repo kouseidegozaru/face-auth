@@ -1,5 +1,5 @@
-from ...models import TrainingData, TrainingGroup
-from ...services.learning.types import LearningDataSet
+from ..models import TrainingData, TrainingGroup
+from ..services.recognize import LearningDataSet
 
 def create_training_data_set(group_id) -> LearningDataSet:
     """

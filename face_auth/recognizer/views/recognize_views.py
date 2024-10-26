@@ -5,9 +5,10 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
 from ..models import TrainingGroup
-from .logic import feature_training,feature_predict
+from ..repository import save_feature_model,load_feature_model,create_training_data_set
 from ..serializers import TrainSerializer, PredictSerializer
 from ..services.tools import open_image
+from ..services.recognize import train_feature, predict_feature
 
 class TrainView(APIView):
     # 認証済みのユーザーのみアクセス可能
@@ -26,8 +27,12 @@ class TrainView(APIView):
         if group.owner != request.user:
             return Response({"detail": "You do not have permission to train this group."}, status=status.HTTP_403_FORBIDDEN)
 
+        # データセットの作成
+        dataset = create_training_data_set(group.id)
         # 学習
-        feature_training(group.id)
+        feature_model = train_feature(dataset)
+        # モデルの保存
+        save_feature_model(feature_model, group.id)
         
         return Response(status=status.HTTP_200_OK)
 
@@ -50,7 +55,9 @@ class PredictView(APIView):
 
         # 画像の読み込み
         image_data = open_image(serializer.validated_data['image'])
+        # 特徴モデルの読み込み
+        feature_model = load_feature_model(group.id)
         # 推論
-        result_label = feature_predict(group.id, image_data)
+        result_label = predict_feature(feature_model, image_data)
 
         return Response(result_label)

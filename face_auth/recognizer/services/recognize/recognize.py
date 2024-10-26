@@ -7,7 +7,7 @@ from ..tools.image_operations import open_image
 from .feature_models import FeatureModel
 
 
-def learning(data_set: LearningDataSet) -> FeatureModel:
+def train_feature(data_set: LearningDataSet) -> FeatureModel:
     """学習を実行する
 
     Args:
