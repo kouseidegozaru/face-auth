@@ -5,10 +5,12 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 
 from ..models import TrainingGroup
-from ..repository import save_feature_model,load_feature_model,create_training_data_set
-from ..serializers import TrainSerializer, PredictSerializer
-from ..services.tools import open_image
-from ..services.recognize import train_feature, predict_feature
+from ..repository.save_model import save_feature_model
+from ..repository.load_model import load_feature_model
+from ..repository.datasets import create_training_data_set
+from ..serializers.recognize_serializers import TrainSerializer, PredictSerializer
+from ..services.tools.image_operations import open_image
+from ..services.recognize.recognize import train_feature, predict_feature
 
 class TrainView(APIView):
     # 認証済みのユーザーのみアクセス可能
