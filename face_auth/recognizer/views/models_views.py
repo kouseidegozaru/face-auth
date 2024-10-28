@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from ..models import TrainingGroup, TrainingData
-from ..serializers import TrainingGroupSerializer, TrainingDataSerializer
+from ..serializers.models_serializers import TrainingGroupSerializer, TrainingDataSerializer
 from django.shortcuts import get_object_or_404
 
 

@@ -1,4 +1,4 @@
-from ..learning import detect_face
+from ..recognize.recognize import detect_face
 import numpy as np
 
 def is_exist_face(image : np.ndarray) -> bool:
