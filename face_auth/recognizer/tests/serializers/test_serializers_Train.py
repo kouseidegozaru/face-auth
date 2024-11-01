@@ -3,8 +3,8 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework.test import APIRequestFactory, force_authenticate
 from rest_framework.exceptions import ValidationError
-from ...models import TrainingGroup, TrainingData
-from ...serializers.recognize_serializers import TrainSerializer
+from recognizer.models import TrainingGroup, TrainingData
+from recognizer.serializers.recognize_serializers import TrainSerializer
 from django.core.files.uploadedfile import SimpleUploadedFile
 import os
 
