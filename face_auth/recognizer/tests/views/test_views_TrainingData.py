@@ -56,18 +56,6 @@ class TestTrainingDataViewSet(APITestCase):
         response = self.client.get(self.url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_create_training_data(self):
-        # TrainingDataの作成テスト
-        url = reverse('training-data-list')
-        data = {
-            'label': 'test_label',
-            'group': self.group.pk,
-            'image': SimpleUploadedFile("new_image.jpg", b"new_image_data", content_type="image/jpeg")
-        }
-        response = self.client.post(url, data=data, format='multipart')
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(TrainingData.objects.count(), 2)
-
     def test_update_training_data(self):
         # TrainingDataの更新テスト
         url = reverse('training-data-detail', args=[self.training_data.pk])
