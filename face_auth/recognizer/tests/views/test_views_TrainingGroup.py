@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from recognizer.models import TrainingGroup
 
 
-class TrainingGroupViewSetTestCase(APITestCase):
+class TestTrainingGroupViewSet(APITestCase):
 
     def setUp(self):
         self.user = get_user_model().objects.create_user(
