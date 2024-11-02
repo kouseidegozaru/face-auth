@@ -3,8 +3,9 @@ from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework.test import APIRequestFactory, force_authenticate
 from rest_framework.exceptions import ValidationError
-from recognizer.models import TrainingGroup
+from recognizer.models import TrainingGroup, FeatureData
 from recognizer.serializers.recognize_serializers import PredictSerializer
+from recognizer.tests.tools.feature_model_generator import get_random_feature_model, convert_to_binary_feature_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from unittest.mock import patch
 import uuid
@@ -23,14 +24,17 @@ class TestPredictSerializer(TestCase):
         self.group_with_model = TrainingGroup.objects.create(
             name="test_group_with_model",
             owner=self.user,
-            feature_model=True  # モデルが存在することを仮定
+        )
+        # 特徴モデルの作成
+        FeatureData.objects.create(
+            group=self.group_with_model,
+            feature=convert_to_binary_feature_model(get_random_feature_model()),
         )
 
         # 特徴モデルがないトレーニンググループの作成
         self.group_without_model = TrainingGroup.objects.create(
             name="test_group_without_model",
-            owner=self.user,
-            feature_model=False  # モデルが存在しない
+            owner=self.user
         )
 
         # テスト用の画像データを作成
