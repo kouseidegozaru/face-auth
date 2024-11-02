@@ -46,10 +46,8 @@ class TestTrainingGroupSerializer(TestCase):
     def test_update_fail_name_required(self):
         # シリアライザーのname更新失敗テスト
         serializer = TrainingGroupSerializer(instance=self.training_group, data={})
-        with self.assertRaises(ValidationError) as context:
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-        self.assertIn("name", str(context.exception)) # 正しく例外が発生することを確認
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("name", serializer.errors)
 
     def test_update_fail_owner_read_only(self):
         # シリアライザーのowner更新失敗テスト(ownerは読み取り専用)
