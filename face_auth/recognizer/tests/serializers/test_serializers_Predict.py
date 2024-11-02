@@ -33,42 +33,25 @@ class TestPredictSerializer(TestCase):
             feature_model=False  # モデルが存在しない
         )
 
-        # シリアライザーで使用するAPIリクエストの設定
-        self.factory = APIRequestFactory()
-        self.url = reverse('predict-group', args=[self.group_with_model.pk])  # 適切なエンドポイントに合わせる
+        # テスト用の画像データを作成
         self.image = SimpleUploadedFile("test_image.jpg", b"test_image_data", content_type="image/jpeg")
 
     @patch('...services.validations.validations.is_exist_face', return_value=True)
     def test_validate_success(self, mock_is_exist_face):
         # 正常な画像とモデルがある場合の検証
-        request = self.factory.post(self.url, {'image': self.image})
-        force_authenticate(request, user=self.user)
-        serializer = PredictSerializer(data={'pk': self.group_with_model.pk, 'image': self.image}, context={'request': request})
-        
+        serializer = PredictSerializer(data={'pk': self.group_with_model.pk, 'image': self.image})
         # シリアライザーが正常に検証されることを確認
         self.assertTrue(serializer.is_valid())
 
     def test_validate_fail_feature_model_missing(self):
         # 特徴モデルが存在しないグループで予測しようとした場合
-        request = self.factory.post(self.url, {'image': self.image})
-        force_authenticate(request, user=self.user)
-        serializer = PredictSerializer(data={'pk': self.group_without_model.pk, 'image': self.image}, context={'request': request})
-
-        with self.assertRaises(ValidationError) as e:
-            serializer.is_valid(raise_exception=True)
-        
-        # エラーメッセージの確認
-        self.assertIn("Feature model does not exist.", str(e.exception))
+        serializer = PredictSerializer(data={'pk': self.group_without_model.pk, 'image': self.image})
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("Feature model does not exist.", serializer.errors)
 
     @patch('...services.validations.validations.is_exist_face', return_value=False)
     def test_validate_fail_no_face_in_image(self, mock_is_exist_face):
         # 画像に顔が含まれていない場合
-        request = self.factory.post(self.url, {'image': self.image})
-        force_authenticate(request, user=self.user)
-        serializer = PredictSerializer(data={'pk': self.group_with_model.pk, 'image': self.image}, context={'request': request})
-
-        with self.assertRaises(ValidationError) as e:
-            serializer.is_valid(raise_exception=True)
-        
-        # エラーメッセージの確認
-        self.assertIn("画像に顔が見つかりません", str(e.exception))
+        serializer = PredictSerializer(data={'pk': self.group_with_model.pk, 'image': self.image})
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("画像に顔が見つかりません", serializer.errors)
