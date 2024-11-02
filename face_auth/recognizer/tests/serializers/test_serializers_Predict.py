@@ -36,7 +36,7 @@ class TestPredictSerializer(TestCase):
         # テスト用の画像データを作成
         self.image = SimpleUploadedFile("test_image.jpg", b"test_image_data", content_type="image/jpeg")
 
-    @patch('...services.validations.validations.is_exist_face', return_value=True)
+    @patch('services.validations.validations.is_exist_face', return_value=True)
     def test_validate_success(self, mock_is_exist_face):
         # 正常な画像とモデルがある場合の検証
         serializer = PredictSerializer(data={'pk': self.group_with_model.pk, 'image': self.image})
@@ -49,7 +49,7 @@ class TestPredictSerializer(TestCase):
         self.assertFalse(serializer.is_valid())
         self.assertIn("Feature model does not exist.", serializer.errors)
 
-    @patch('...services.validations.validations.is_exist_face', return_value=False)
+    @patch('services.validations.validations.is_exist_face', return_value=False)
     def test_validate_fail_no_face_in_image(self, mock_is_exist_face):
         # 画像に顔が含まれていない場合
         serializer = PredictSerializer(data={'pk': self.group_with_model.pk, 'image': self.image})
