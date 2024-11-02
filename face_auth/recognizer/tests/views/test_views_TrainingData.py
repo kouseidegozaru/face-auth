@@ -15,19 +15,7 @@ class TestTrainingDataViewSet(APITestCase):
             email='test_email@example.com',
             name='test_user',
             password='test_password',
-        )
-        # テスト用のTrainingGroupの作成
-        self.group = TrainingGroup.objects.create(name='test_group', owner=self.user)
-        # テスト用のTrainingDataの作成
-        self.training_data = TrainingData.objects.create(
-            group=self.group,
-            image=SimpleUploadedFile("test_image.jpg", b"random_image_data", content_type="image/jpeg")
-        )
-        # 作成した画像パスを保持
-        self.image_paths = [self.training_data.image.path]
-        # APIのURLを生成
-        self.url = reverse('training-data-detail', args=[self.training_data.pk])
-        
+        )        
         # 認証トークンの取得
         response = self.client.post(
             reverse('token_obtain_pair'),
@@ -39,6 +27,18 @@ class TestTrainingDataViewSet(APITestCase):
             raise ValueError('Token retrieval failed')
         # 認証ヘッダーの設定
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.token}')
+
+        # テスト用のTrainingGroupの作成
+        self.group = TrainingGroup.objects.create(name='test_group', owner=self.user)
+        # テスト用のTrainingDataの作成
+        self.training_data = TrainingData.objects.create(
+            group=self.group,
+            label='test_label',
+            image=SimpleUploadedFile("test_image.jpg", b"random_image_data", content_type="image/jpeg")
+        )
+        # 作成した画像パスを保持
+        self.image_paths = [self.training_data.image.path]
+
 
     def tearDown(self):
         # 作成した画像ファイルの削除
