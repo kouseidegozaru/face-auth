@@ -48,6 +48,12 @@ class TestTrainSerializer(TestCase):
         # シリアライザーが正常に検証されることを確認
         self.assertTrue(serializer.is_valid())
 
+    def test_validate_fail_nonexistent_group(self):
+        # 存在しないトレーニンググループの検証
+        serializer = TrainSerializer(data={"pk": 9999})
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("group", serializer.errors)
+
     def test_validate_fail_insufficient_images(self):
         # トレーニンググループに画像が1つしかない場合の検証
         self.image2.delete()
