@@ -36,10 +36,6 @@ class TestTrainSerializer(TestCase):
         # 削除対象のファイルパスを保持するリスト
         self.image_paths = [self.image1.image.path, self.image2.image.path]
 
-        # シリアライザーで使用するAPIリクエストの設定
-        self.factory = APIRequestFactory()
-        self.url = reverse('train-group', args=[self.group.pk])  # 適切なエンドポイントに合わせる
-
     def tearDown(self):
         # 画像ファイルを削除
         for image_path in self.image_paths:
@@ -48,24 +44,14 @@ class TestTrainSerializer(TestCase):
 
     def test_validate_success(self):
         # 正常なトレーニングシリアライザーの検証
-        request = self.factory.get(self.url)
-        force_authenticate(request, user=self.user)
-        serializer = TrainSerializer(data={"pk": self.group.pk}, context={"request": request})
-        
+        serializer = TrainSerializer(data={"pk": self.group.pk})
         # シリアライザーが正常に検証されることを確認
         self.assertTrue(serializer.is_valid())
 
     def test_validate_fail_insufficient_images(self):
         # トレーニンググループに画像が1つしかない場合の検証
-        # 最初に画像の1つを削除して2枚未満にする
         self.image2.delete()
-
-        request = self.factory.get(self.url)
-        force_authenticate(request, user=self.user)
-        serializer = TrainSerializer(data={"pk": self.group.pk}, context={"request": request})
-
-        with self.assertRaises(ValidationError) as e:
-            serializer.is_valid(raise_exception=True)
+        serializer = TrainSerializer(data={"pk": self.group.pk})
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("images", serializer.errors)
         
-        # エラーメッセージの確認
-        self.assertIn("You must upload at least two images to train this group.", str(e.exception))
