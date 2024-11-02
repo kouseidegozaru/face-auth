@@ -13,6 +13,11 @@ class TestTrainingGroupViewSet(APITestCase):
             name='test_user',
             password='test_password',
         )
+        self.another_user = get_user_model().objects.create_user(
+            email='test_email2@example.com',
+            name='test_user2',
+            password='test_password2',
+        )
         # 認証用のトークンを作成
         response = self.client.post(
             reverse('token_obtain_pair'),
@@ -50,7 +55,7 @@ class TestTrainingGroupViewSet(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(TrainingGroup.objects.count(), 2)
 
-    def test_update(self):
+    def test_update_name_success(self):
         # TrainingGroupを更新
         url = reverse('training-group-detail', args=[self.group.pk])
         response = self.client.patch(url, data={'name': 'test_group2'})
@@ -58,9 +63,41 @@ class TestTrainingGroupViewSet(APITestCase):
         self.group.refresh_from_db()
         self.assertEqual(self.group.name, 'test_group2')
 
+    def test_update_name_failed(self):
+        # TrainingGroupを更新
+        url = reverse('training-group-detail', args=[self.group.pk])
+        response = self.client.patch(url, data={})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
+    def test_update_owner_failed(self):
+        # TrainingGroupのオーナーを別のユーザーに更新
+        url = reverse('training-group-detail', args=[self.group.pk])
+        response = self.client.patch(url, data={'owner': self.another_user})
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+
     def test_destroy(self):
         # TrainingGroupを削除
         url = reverse('training-group-detail', args=[self.group.pk])
         response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(TrainingGroup.objects.count(), 0)
+
+    def test_unauthorized_user_access(self):
+        # 他のユーザーによるアクセス制限テスト
+        self.client.force_authenticate(user=self.another_user)
+
+        # 他のユーザーでのGETアクセスをテスト
+        response = self.client.get(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # 他のユーザーでのPOSTアクセスをテスト
+        response = self.client.post(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # 他のユーザーでのPATCHアクセスをテスト
+        response = self.client.patch(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+
+        # 他のユーザーでのDELETEアクセスをテスト
+        response = self.client.delete(self.url)
+        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
