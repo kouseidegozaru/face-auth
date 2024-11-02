@@ -28,11 +28,11 @@ class TestTrainingGroupViewSet(APITestCase):
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.token}')
         
         self.group = TrainingGroup.objects.create(name='test_group', owner=self.user)
-        self.url = reverse('training-group-list')
 
     def test_list(self):
         # 全てのTrainingGroupを取得
-        response = self.client.get(self.url)
+        url = reverse('training-group-list')
+        response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(len(response.data), 1)
 
