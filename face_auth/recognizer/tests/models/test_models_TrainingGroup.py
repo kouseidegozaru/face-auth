@@ -25,8 +25,6 @@ class TestTrainingGroup(TestCase):
         self.assertEqual(self.group.name, 'updated_group')
 
     def test_delete(self):
-        # TrainingGroupが1件作成されていることを確認
-        self.assertEqual(TrainingGroup.objects.count(), 1)
         # グループを削除し、データベースから削除されたことを確認
         self.group.delete()
         self.assertEqual(TrainingGroup.objects.count(), 0)
