@@ -48,12 +48,14 @@ class TestTrainingDataViewSet(APITestCase):
 
     def test_list_training_data(self):
         # TrainingDataの一覧取得テスト
-        response = self.client.get(reverse('training-data-list'))
+        url = reverse('training-data-list')
+        response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_retrieve_training_data(self):
         # 特定のTrainingDataの取得テスト
-        response = self.client.get(self.url)
+        url = reverse('training-data-detail', args=[self.training_data.pk])
+        response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_update_training_data(self):
@@ -70,7 +72,8 @@ class TestTrainingDataViewSet(APITestCase):
 
     def test_destroy_training_data(self):
         # TrainingDataの削除テスト
-        response = self.client.delete(self.url)
+        url = reverse('training-data-detail', args=[self.training_data.pk])
+        response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
         self.assertEqual(TrainingData.objects.count(), 0)
 
@@ -82,8 +85,9 @@ class TestTrainingDataViewSet(APITestCase):
 
     def test_destroy_without_authentication(self):
         # 認証なしでのTrainingData削除テスト
+        url = reverse('training-data-detail', args=[self.training_data.pk])
         self.client.credentials()  # 認証ヘッダーをクリア
-        response = self.client.delete(self.url)
+        response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_401_UNAUTHORIZED)
 
     def test_unauthorized_user_access(self):
