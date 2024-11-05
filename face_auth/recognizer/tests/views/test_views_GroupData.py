@@ -5,7 +5,6 @@ from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from recognizer.models import TrainingGroup, TrainingData
 import os
-import uuid
 
 class TestGroupDataViewSet(APITestCase):
     def setUp(self):

@@ -3,7 +3,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
-from recognizer.models import TrainingGroup, TrainingData, FeatureData
+from recognizer.models import TrainingGroup, FeatureData
 from recognizer.tests.tools.feature_model_generator import get_random_feature_model, convert_to_binary_feature_model
 import os
 import uuid

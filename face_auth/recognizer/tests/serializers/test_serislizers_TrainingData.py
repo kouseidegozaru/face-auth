@@ -2,7 +2,6 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from recognizer.models import TrainingData, TrainingGroup
 from recognizer.serializers.models_serializers import TrainingDataSerializer
-from rest_framework.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 import os
 

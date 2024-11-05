@@ -2,7 +2,6 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from recognizer.models import TrainingGroup
 from recognizer.serializers.models_serializers import TrainingGroupSerializer
-from rest_framework.exceptions import ValidationError
 
 class TestTrainingGroupSerializer(TestCase):
 

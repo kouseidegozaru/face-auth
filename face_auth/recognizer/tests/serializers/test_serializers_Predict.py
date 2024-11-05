@@ -1,8 +1,5 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-from django.urls import reverse
-from rest_framework.test import APIRequestFactory, force_authenticate
-from rest_framework.exceptions import ValidationError
 from recognizer.models import TrainingGroup, FeatureData
 from recognizer.serializers.recognize_serializers import PredictSerializer
 from recognizer.tests.tools.feature_model_generator import get_random_feature_model, convert_to_binary_feature_model
