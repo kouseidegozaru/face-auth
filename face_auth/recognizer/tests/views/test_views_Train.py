@@ -6,6 +6,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from recognizer.models import TrainingGroup, TrainingData
 import os
 import uuid
+from unittest.mock import patch
 
 class TestTrainView(APITestCase):
 
@@ -22,16 +23,23 @@ class TestTrainView(APITestCase):
             owner=self.user
         )
         # テスト用のTrainingDataの作成
-        self.data = TrainingData.objects.create(
-            label=' test_data',
+        self.data1 = TrainingData.objects.create(
+            label=' test_data1',
             group=self.group,
             image=SimpleUploadedFile(
-                "test_image.jpg", b"random_image_data", content_type="image/jpeg"
+                "test_image1.jpg", b"random_image_data", content_type="image/jpeg"
+            )
+        )
+        self.data2 = TrainingData.objects.create(
+            label=' test_data2',
+            group=self.group,
+            image=SimpleUploadedFile(
+                "test_image2.jpg", b"random_image_data", content_type="image/jpeg"
             )
         )
 
         # 削除対象のファイルパスを保持するリスト
-        self.image_paths = [self.data.image.path]
+        self.image_paths = [self.data1.image.path, self.data2.image.path]
 
         # 認証トークンの取得
         response = self.client.post(
@@ -40,7 +48,7 @@ class TestTrainView(APITestCase):
             format='json'
         )
         self.token = response.data.get('access')
-        if not self.token:
+        if self.token is None:
             raise ValueError('Token retrieval failed')
         # 認証ヘッダーの設定
         self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.token}')
@@ -51,21 +59,34 @@ class TestTrainView(APITestCase):
             if os.path.exists(path):
                 os.remove(path)
 
-    def test_post(self):
+    @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
+    def test_post(self, mock_is_exist_face):
         # POSTリクエストのテスト
-        # テスト用のTrainingDataの作成
-        self.data = TrainingData.objects.create(
-            label=' test_data',
-            group=self.group,
-            image=SimpleUploadedFile(
-                "test_image.jpg", b"random_image_data", content_type="image/jpeg"
-            )
-        )
         url = reverse('train', args=[self.group.pk])
-        data = {}
-        response = self.client.post(url, data, format='multipart')
+        response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(TrainingData.objects.count(), 2)
+
+    def test_post_face_not_found(self):
+        # POSTリクエストの失敗テスト
+        url = reverse('train', args=[self.group.pk])
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+
+    @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
+    def test_post_group_not_found(self):
+        # POSTリクエストの失敗テスト
+        url = reverse('train', args=[uuid.uuid4()])
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+
+    @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
+    def test_post_data_not_enough(self):
+        # POSTリクエストの失敗テスト
+        self.data1.delete()
+        url = reverse('train', args=[self.group.pk])
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
     def test_get_failed(self):
         # GETリクエストの失敗テスト

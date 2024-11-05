@@ -2,7 +2,6 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from recognizer.models import TrainingData, TrainingGroup
 from recognizer.serializers.models_serializers import TrainingDataSerializer
-from rest_framework.exceptions import ValidationError
 from django.core.files.uploadedfile import SimpleUploadedFile
 import os
 
@@ -66,10 +65,8 @@ class TestTrainingDataSerializer(TestCase):
     def test_update_fail_label_required(self):
         # シリアライザーのlabel更新失敗テスト
         serializer = TrainingDataSerializer(instance=self.training_data, data={})
-        with self.assertRaises(ValidationError) as context:
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-        self.assertIn("label", str(context.exception))
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("label", serializer.errors)
 
     def test_update_image(self):
         # シリアライザーの更新テスト
@@ -89,10 +86,8 @@ class TestTrainingDataSerializer(TestCase):
     def test_update_fail_image_required(self):
         # シリアライザーのimage更新失敗テスト
         serializer = TrainingDataSerializer(instance=self.training_data, data={})
-        with self.assertRaises(ValidationError) as context:
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-        self.assertIn("image", str(context.exception))
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("image", serializer.errors)
 
     def test_update_fail_group_read_only(self):
         # シリアライザーのgroup更新失敗テスト(groupは読み取り専用)
@@ -100,10 +95,8 @@ class TestTrainingDataSerializer(TestCase):
             "group": self.group,
             "label": "updated_label"
         })
-        with self.assertRaises(ValidationError) as context:
-            serializer.is_valid(raise_exception=True)
-            serializer.save()
-        self.assertIn("group", str(context.exception))
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("group", serializer.errors)
 
     def test_update_fail_owner_read_only(self):
         # シリアライザーのowner更新失敗テスト(ownerは読み取り専用)

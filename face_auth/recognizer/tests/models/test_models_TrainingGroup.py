@@ -14,6 +14,10 @@ class TestTrainingGroup(TestCase):
         # テスト用のTrainingGroupインスタンスを作成し、ユーザーをオーナーとして設定
         self.group = TrainingGroup.objects.create(name='test_group', owner=self.user)
 
+    def test_create(self):
+        # TrainingGroupの作成に成功するかを確認
+        self.assertEqual(TrainingGroup.objects.count(), 1)
+
     def test_owner(self):
         # TrainingGroupのオーナーが正しいユーザーであることを確認
         self.assertEqual(self.group.owner, self.user)
@@ -25,8 +29,6 @@ class TestTrainingGroup(TestCase):
         self.assertEqual(self.group.name, 'updated_group')
 
     def test_delete(self):
-        # TrainingGroupが1件作成されていることを確認
-        self.assertEqual(TrainingGroup.objects.count(), 1)
         # グループを削除し、データベースから削除されたことを確認
         self.group.delete()
         self.assertEqual(TrainingGroup.objects.count(), 0)
