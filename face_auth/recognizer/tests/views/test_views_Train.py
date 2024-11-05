@@ -59,6 +59,7 @@ class TestTrainView(APITestCase):
             if os.path.exists(path):
                 os.remove(path)
 
+    @patch('recognizer.services.recognize.recognize.detect_face', side_effect=lambda image: image)
     @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
     def test_post(self, mock_is_exist_face):
         # POSTリクエストのテスト
@@ -73,6 +74,7 @@ class TestTrainView(APITestCase):
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
+    @patch('recognizer.services.recognize.recognize.detect_face', side_effect=lambda image: image)
     @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
     def test_post_group_not_found(self):
         # POSTリクエストの失敗テスト
@@ -80,6 +82,7 @@ class TestTrainView(APITestCase):
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
+    @patch('recognizer.services.recognize.recognize.detect_face', side_effect=lambda image: image)
     @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
     def test_post_data_not_enough(self):
         # POSTリクエストの失敗テスト
