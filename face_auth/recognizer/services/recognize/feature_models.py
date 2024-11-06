@@ -1,6 +1,6 @@
 from sklearn.neighbors import NearestNeighbors
 import numpy as np
-import joblib
+import pickle
 
 class FeatureModel:
     """学習後の特徴モデルを保持するクラス"""
@@ -21,10 +21,10 @@ class FeatureModelStorage:
         self.model = model
 
     def set_binary_feature(self, binary_feature: bytes):
-        self.model = joblib.load(binary_feature)
+        self.model = pickle.loads(binary_feature)
 
     def get(self) -> FeatureModel:
         return self.model
 
     def convert_to_binary(self) -> bytes:
-        return joblib.dump(self.model)
+        return pickle.dumps(self.model)

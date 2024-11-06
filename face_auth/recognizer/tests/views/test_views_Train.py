@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
+from allauth.account.models import EmailAddress
 from recognizer.models import TrainingGroup, TrainingData
 import os
 import uuid
@@ -41,17 +42,19 @@ class TestTrainView(APITestCase):
         # 削除対象のファイルパスを保持するリスト
         self.image_paths = [self.data1.image.path, self.data2.image.path]
 
+        # ユーザーのメールアドレスを認証済みに設定
+        EmailAddress.objects.create(user=self.user, email=self.user.email, verified=True, primary=True)
         # 認証トークンの取得
         response = self.client.post(
-            reverse('token_obtain_pair'),
+            reverse('custom_login'),
             {'email': 'test_email@example.com', 'password': 'test_password'},
             format='json'
         )
-        self.token = response.data.get('access')
-        if self.token is None:
+        self.token = response.data.get("key")
+        if not self.token:
             raise ValueError('Token retrieval failed')
         # 認証ヘッダーの設定
-        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.token}')
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token}')
 
     def tearDown(self):
         # 削除対象のファイルを削除する
@@ -61,7 +64,7 @@ class TestTrainView(APITestCase):
 
     @patch('recognizer.services.recognize.recognize.detect_face', side_effect=lambda image: image)
     @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
-    def test_post(self, mock_is_exist_face):
+    def test_post(self, mock_is_exist_face, mock_detect_face):
         # POSTリクエストのテスト
         url = reverse('train', args=[self.group.pk])
         response = self.client.post(url)
@@ -76,7 +79,7 @@ class TestTrainView(APITestCase):
 
     @patch('recognizer.services.recognize.recognize.detect_face', side_effect=lambda image: image)
     @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
-    def test_post_group_not_found(self):
+    def test_post_group_not_found(self, mock_is_exist_face, mock_detect_face):
         # POSTリクエストの失敗テスト
         url = reverse('train', args=[uuid.uuid4()])
         response = self.client.post(url)
@@ -84,7 +87,7 @@ class TestTrainView(APITestCase):
 
     @patch('recognizer.services.recognize.recognize.detect_face', side_effect=lambda image: image)
     @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
-    def test_post_data_not_enough(self):
+    def test_post_data_not_enough(self, mock_is_exist_face, mock_detect_face):
         # POSTリクエストの失敗テスト
         self.data1.delete()
         url = reverse('train', args=[self.group.pk])

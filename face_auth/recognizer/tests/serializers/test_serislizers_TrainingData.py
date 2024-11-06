@@ -48,7 +48,7 @@ class TestTrainingDataSerializer(TestCase):
         training_data = serializer.save(owner=self.user)
         # テスト用のTrainingDataインスタンスと一致することを確認
         self.assertEqual(training_data.group, self.group)
-        self.assertEqual(training_data.image.name, "test_image.jpg")
+        self.assertEqual(os.path.basename(training_data.image.name), "test_image.jpg")
         self.assertEqual(training_data.label, "test_label")
         self.assertIsNotNone(training_data.created_at)
         self.assertIsNotNone(training_data.updated_at)
@@ -78,7 +78,7 @@ class TestTrainingDataSerializer(TestCase):
         })
         self.assertTrue(serializer.is_valid())
         updated_training_data = serializer.save()
-        self.assertEqual(updated_training_data.image.name, "updated_image.jpg")
+        self.assertEqual(os.path.basename(updated_training_data.image.name), "updated_image.jpg")
         
         # 削除対象のファイルパスを保持するリストに追加
         self.image_paths.append(updated_training_data.image.path)

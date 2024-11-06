@@ -2,7 +2,8 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from recognizer.models import TrainingGroup, FeatureData
 from recognizer.serializers.recognize_serializers import PredictSerializer
-from recognizer.tests.tools.feature_model_generator import get_random_feature_model, convert_to_binary_feature_model
+from recognizer.tests.tools.feature_model_generator import get_random_feature_model
+from recognizer.repository.save_model import feature_model_to_binary
 from django.core.files.uploadedfile import SimpleUploadedFile
 from unittest.mock import patch
 import uuid
@@ -25,7 +26,7 @@ class TestPredictSerializer(TestCase):
         # 特徴モデルの作成
         FeatureData.objects.create(
             group=self.group_with_model,
-            feature=convert_to_binary_feature_model(get_random_feature_model()),
+            feature=feature_model_to_binary(get_random_feature_model()),
         )
 
         # 特徴モデルがないトレーニンググループの作成
@@ -37,7 +38,7 @@ class TestPredictSerializer(TestCase):
         # テスト用の画像データを作成
         self.image = SimpleUploadedFile("test_image.jpg", b"test_image_data", content_type="image/jpeg")
 
-    @patch('services.validations.validations.is_exist_face', return_value=True)
+    @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
     def test_validate_success(self, mock_is_exist_face):
         # 正常な画像とモデルがある場合の検証
         serializer = PredictSerializer(data={'pk': self.group_with_model.pk, 'image': self.image})
@@ -50,7 +51,7 @@ class TestPredictSerializer(TestCase):
         self.assertFalse(serializer.is_valid())
         self.assertIn("Feature model does not exist.", serializer.errors)
 
-    @patch('services.validations.validations.is_exist_face', return_value=False)
+    @patch('recognizer.services.validations.validations.is_exist_face', return_value=False)
     def test_validate_fail_no_face_in_image(self, mock_is_exist_face):
         # 画像に顔が含まれていない場合
         serializer = PredictSerializer(data={'pk': self.group_with_model.pk, 'image': self.image})

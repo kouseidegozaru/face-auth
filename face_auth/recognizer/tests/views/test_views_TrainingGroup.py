@@ -2,6 +2,7 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
+from allauth.account.models import EmailAddress
 from recognizer.models import TrainingGroup
 
 
@@ -18,19 +19,19 @@ class TestTrainingGroupViewSet(APITestCase):
             name='test_user2',
             password='test_password2',
         )
-        # 認証用のトークンを作成
+        # ユーザーのメールアドレスを認証済みに設定
+        EmailAddress.objects.create(user=self.user, email=self.user.email, verified=True, primary=True)
+        # 認証トークンの取得
         response = self.client.post(
-            reverse('token_obtain_pair'),
-            data={
-                'email': 'test_email@example.com',
-                'password': 'test_password',
-            },
+            reverse('custom_login'),
+            {'email': 'test_email@example.com', 'password': 'test_password'},
             format='json'
         )
-        self.token = response.data.get('access')
-        if self.token is None:
-            raise ValueError('token is None')
-        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.token}')
+        self.token = response.data.get("key")
+        if not self.token:
+            raise ValueError('Token retrieval failed')
+        # 認証ヘッダーの設定
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token}')
         
         self.group = TrainingGroup.objects.create(name='test_group', owner=self.user)
 
@@ -84,20 +85,22 @@ class TestTrainingGroupViewSet(APITestCase):
 
     def test_unauthorized_user_access(self):
         # 他のユーザーによるアクセス制限テスト
+        url = reverse('training-group-detail', args=[self.group.pk])
+        
         self.client.force_authenticate(user=self.another_user)
 
         # 他のユーザーでのGETアクセスをテスト
-        response = self.client.get(self.url)
+        response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         # 他のユーザーでのPOSTアクセスをテスト
-        response = self.client.post(self.url)
+        response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         # 他のユーザーでのPATCHアクセスをテスト
-        response = self.client.patch(self.url)
+        response = self.client.patch(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         # 他のユーザーでのDELETEアクセスをテスト
-        response = self.client.delete(self.url)
+        response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
