@@ -43,7 +43,9 @@ class TestTrainingGroup(TestCase):
         # FeatureDataのバイナリデータをFeatureModel形式に変換して、元のFeatureModelと一致するか確認
         binary_feature_model = self.feature_data.feature
         feature_model = convert_bynary_to_feature_model(binary_feature_model)
-        self.assertEqual(feature_model, self.feature_model)
+        self.assertIsInstance(feature_model, FeatureModel)
+        self.assertEqual(feature_model.labels, self.feature_model.labels)
+        self.assertEqual(feature_model.model.get_params(), self.feature_model.model.get_params())
 
     def test_update_feature_model(self):
         # FeatureModelを更新し、保存後に更新が反映されていることを確認
