@@ -12,7 +12,7 @@ class TrainingGroupSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         # nameは必須
-        if "name" not in validated_data:
+        if validated_data.get("name") is None:
             raise serializers.ValidationError("detail: 'name' is required")
         return super().update(instance, validated_data)
 
@@ -32,11 +32,11 @@ class TrainingDataSerializer(serializers.ModelSerializer):
 
     def update(self, instance, validated_data):
         # imageとlabelのどちらもない場合はエラー
-        if "image" not in validated_data and "label" not in validated_data:
+        if validated_data.get("image") is None and validated_data.get("label") is None:
             raise serializers.ValidationError("detail: either 'image' or 'label' must be provided")
         
         # imageに顔が見つからない場合はエラー
-        if "image" in validated_data:
+        if validated_data.get("image") is not None:
             image = open_image(validated_data["image"])
             if not is_exist_face(image):
                 raise serializers.ValidationError("detail: cannot detect face in image")
