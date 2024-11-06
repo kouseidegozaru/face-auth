@@ -11,10 +11,6 @@ class TrainSerializer(serializers.Serializer):
         # トレーニンググループの取得
         group = get_object_or_404(TrainingGroup, pk=data['pk'])
 
-        # オーナーの確認
-        if group.owner != self.context['request'].user:
-            raise serializers.ValidationError("You do not have permission to train this group.")
-
         # グループに画像ファイルが2種類以上あるか
         if group.images.count() < 2:
             raise serializers.ValidationError("You must upload at least two images to train this group.")
@@ -29,10 +25,6 @@ class PredictSerializer(serializers.Serializer):
     def validate(self, data):
         # トレーニンググループの取得
         group = get_object_or_404(TrainingGroup, pk=data['pk'])
-
-        # オーナーの確認
-        if group.owner != self.context['request'].user:
-            raise serializers.ValidationError("You do not have permission to predict this group.")
 
         # 特徴モデルが存在するか確認
         if not group.feature_model:
