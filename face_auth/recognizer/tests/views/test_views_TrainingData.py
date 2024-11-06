@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
+from allauth.account.models import EmailAddress
 from recognizer.models import TrainingData, TrainingGroup
 import os
 import uuid
@@ -16,17 +17,19 @@ class TestTrainingDataViewSet(APITestCase):
             name='test_user',
             password='test_password',
         )        
+        # ユーザーのメールアドレスを認証済みに設定
+        EmailAddress.objects.create(user=self.user, email=self.user.email, verified=True, primary=True)
         # 認証トークンの取得
         response = self.client.post(
-            reverse('token_obtain_pair'),
-            data={'email': 'test_email@example.com', 'password': 'test_password'},
+            reverse('custom_login'),
+            {'email': 'test_email@example.com', 'password': 'test_password'},
             format='json'
         )
-        self.token = response.data.get('access')
+        self.token = response.data.get("key")
         if not self.token:
             raise ValueError('Token retrieval failed')
         # 認証ヘッダーの設定
-        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {self.token}')
+        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token}')
 
         # テスト用のTrainingGroupの作成
         self.group = TrainingGroup.objects.create(name='test_group', owner=self.user)
