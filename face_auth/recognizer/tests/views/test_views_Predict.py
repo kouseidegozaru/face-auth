@@ -51,12 +51,6 @@ class TestPredictView(APITestCase):
             "test_image.jpg", b"random_image_data", content_type="image/jpeg"
         )
 
-    def tearDown(self):
-        # ファイルの削除
-        for path in self.image_paths:
-            if os.path.exists(path):
-                os.remove(path)
-
     @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
     def test_post(self):
         # POSTリクエストのテスト
