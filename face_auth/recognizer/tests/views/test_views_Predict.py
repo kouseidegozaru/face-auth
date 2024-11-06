@@ -57,7 +57,7 @@ class TestPredictView(APITestCase):
             if os.path.exists(path):
                 os.remove(path)
 
-    @patch('recognizer.service.validations.validations.is_exist_face', return_value=True)
+    @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
     def test_post(self):
         # POSTリクエストのテスト
         self.url = reverse('predict', args=[self.group.pk])
@@ -70,14 +70,14 @@ class TestPredictView(APITestCase):
         response = self.client.post(self.url, {'image': self.image})
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
-    @patch('recognizer.service.validations.validations.is_exist_face', return_value=True)
+    @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
     def test_post_group_not_found(self):
         # POSTリクエストの失敗テスト
         self.url = reverse('predict', args=[uuid.uuid4()])
         response = self.client.post(self.url, {'image': self.image})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    @patch('recognizer.service.validations.validations.is_exist_face', return_value=True)
+    @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
     def test_post_feature_data_not_found(self):
         # POSTリクエストの失敗テスト
         self.feature_data.delete()
@@ -85,7 +85,7 @@ class TestPredictView(APITestCase):
         response = self.client.post(self.url, {'image': self.image})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    @patch('recognizer.service.validations.validations.is_exist_face', return_value=True)
+    @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
     def test_post_another_user(self):
         # POSTリクエストの失敗テスト
         self.url = reverse('predict', args=[self.group.pk])
