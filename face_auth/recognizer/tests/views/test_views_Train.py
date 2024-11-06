@@ -64,7 +64,7 @@ class TestTrainView(APITestCase):
 
     @patch('recognizer.services.recognize.recognize.detect_face', side_effect=lambda image: image)
     @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
-    def test_post(self, mock_is_exist_face):
+    def test_post(self, mock_is_exist_face, mock_detect_face):
         # POSTリクエストのテスト
         url = reverse('train', args=[self.group.pk])
         response = self.client.post(url)
@@ -79,7 +79,7 @@ class TestTrainView(APITestCase):
 
     @patch('recognizer.services.recognize.recognize.detect_face', side_effect=lambda image: image)
     @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
-    def test_post_group_not_found(self):
+    def test_post_group_not_found(self, mock_is_exist_face, mock_detect_face):
         # POSTリクエストの失敗テスト
         url = reverse('train', args=[uuid.uuid4()])
         response = self.client.post(url)
@@ -87,7 +87,7 @@ class TestTrainView(APITestCase):
 
     @patch('recognizer.services.recognize.recognize.detect_face', side_effect=lambda image: image)
     @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
-    def test_post_data_not_enough(self):
+    def test_post_data_not_enough(self, mock_is_exist_face, mock_detect_face):
         # POSTリクエストの失敗テスト
         self.data1.delete()
         url = reverse('train', args=[self.group.pk])
