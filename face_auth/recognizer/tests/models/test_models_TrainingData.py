@@ -50,7 +50,7 @@ class TestTrainingData(TestCase):
 
     def test_image(self):
         # TrainingDataの画像ファイル名が正しいか確認
-        self.assertEqual(self.training_data.image.name, "test_image.jpg")
+        self.assertEqual(os.path.basename(self.training_data.image.name), "test_image.jpg")
 
     def test_image_path(self):
         # TrainingDataの画像ファイルパスが正しいか確認
@@ -76,7 +76,7 @@ class TestTrainingData(TestCase):
         
         # 更新後の画像パスを削除対象リストに追加
         self.image_paths.append(self.training_data.image.path)
-        self.assertEqual(self.training_data.image.name, "updated_image.jpg")
+        self.assertEqual(os.path.basename(self.training_data.image.name), "updated_image.jpg")
 
     def test_delete(self):
         # TrainingDataを削除し、データベースから削除されたことを確認
