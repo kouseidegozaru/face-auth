@@ -60,45 +60,46 @@ class TestPredictView(APITestCase):
     @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
     def test_post(self):
         # POSTリクエストのテスト
-        self.url = reverse('predict', args=[self.group.pk])
-        response = self.client.post(self.url, {'image': self.image})
+        url = reverse('predict', args=[self.group.pk])
+        response = self.client.post(url, {'image': self.image})
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_post_face_not_found(self):
         # POSTリクエストの失敗テスト
-        self.url = reverse('predict', args=[self.group.pk])
-        response = self.client.post(self.url, {'image': self.image})
+        url = reverse('predict', args=[self.group.pk])
+        response = self.client.post(url, {'image': self.image})
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
     @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
     def test_post_group_not_found(self):
         # POSTリクエストの失敗テスト
-        self.url = reverse('predict', args=[uuid.uuid4()])
-        response = self.client.post(self.url, {'image': self.image})
+        url = reverse('predict', args=[uuid.uuid4()])
+        response = self.client.post(url, {'image': self.image})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
     def test_post_feature_data_not_found(self):
         # POSTリクエストの失敗テスト
         self.feature_data.delete()
-        self.url = reverse('predict', args=[self.group.pk])
-        response = self.client.post(self.url, {'image': self.image})
+        url = reverse('predict', args=[self.group.pk])
+        response = self.client.post(url, {'image': self.image})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
     def test_post_another_user(self):
         # POSTリクエストの失敗テスト
-        self.url = reverse('predict', args=[self.group.pk])
+        url = reverse('predict', args=[self.group.pk])
         another_user = get_user_model().objects.create_user(
             email='another_test_email@example.com',
             name='another_test_user',
             password='another_test_password',
         )
         self.client.force_authenticate(user=another_user)
-        response = self.client.post(self.url, {'image': self.image})
+        response = self.client.post(url, {'image': self.image})
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
     def test_get_failed(self):
         # GETリクエストの失敗テスト
-        response = self.client.get(self.url)
+        url = reverse('predict', args=[self.group.pk])
+        response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)

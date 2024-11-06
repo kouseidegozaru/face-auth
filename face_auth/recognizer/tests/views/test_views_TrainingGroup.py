@@ -85,20 +85,22 @@ class TestTrainingGroupViewSet(APITestCase):
 
     def test_unauthorized_user_access(self):
         # 他のユーザーによるアクセス制限テスト
+        url = reverse('training-group-detail', args=[self.group.pk])
+        
         self.client.force_authenticate(user=self.another_user)
 
         # 他のユーザーでのGETアクセスをテスト
-        response = self.client.get(self.url)
+        response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         # 他のユーザーでのPOSTアクセスをテスト
-        response = self.client.post(self.url)
+        response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         # 他のユーザーでのPATCHアクセスをテスト
-        response = self.client.patch(self.url)
+        response = self.client.patch(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         # 他のユーザーでのDELETEアクセスをテスト
-        response = self.client.delete(self.url)
+        response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)

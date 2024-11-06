@@ -95,6 +95,7 @@ class TestTrainingDataViewSet(APITestCase):
 
     def test_unauthorized_user_access(self):
         # 他のユーザーによるアクセス制限テスト
+        url = reverse('training-data-detail', args=[self.training_data.pk])
         another_user = get_user_model().objects.create_user(
             email='test_email2@example2.com',
             name='test_user2',
@@ -103,15 +104,15 @@ class TestTrainingDataViewSet(APITestCase):
         self.client.force_authenticate(user=another_user)
         
         # 他のユーザーでのGETアクセスをテスト
-        response = self.client.get(self.url)
+        response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         # 他のユーザーでのPATCHアクセスをテスト
-        response = self.client.patch(self.url)
+        response = self.client.patch(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         # 他のユーザーでのDELETEアクセスをテスト
-        response = self.client.delete(self.url)
+        response = self.client.delete(url)
         self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
 
         another_user.delete()
