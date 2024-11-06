@@ -3,7 +3,9 @@ from django.contrib.auth import get_user_model
 
 from recognizer.services.recognize.feature_models import FeatureModel
 from recognizer.models import TrainingGroup, FeatureData
-from recognizer.tests.tools.feature_model_generator import get_random_feature_model, convert_bynary_to_feature_model, convert_to_binary_feature_model
+from recognizer.tests.tools.feature_model_generator import get_random_feature_model
+from recognizer.repository.load_model import feature_model_from_binary
+from recognizer.repository.save_model import feature_model_to_binary
 
 
 class TestTrainingGroup(TestCase):
@@ -19,7 +21,7 @@ class TestTrainingGroup(TestCase):
         # ランダムなFeatureModelを生成
         self.feature_model: FeatureModel = get_random_feature_model()
         # FeatureModelをバイナリ形式に変換
-        self.binary_feature_model: bytes = convert_to_binary_feature_model(self.feature_model)
+        self.binary_feature_model: bytes = feature_model_to_binary(self.feature_model)
 
         # FeatureDataインスタンスを作成し、バイナリ形式のFeatureModelを保存
         self.feature_data = FeatureData.objects.create(
@@ -42,7 +44,7 @@ class TestTrainingGroup(TestCase):
     def test_feature_model(self):
         # FeatureDataのバイナリデータをFeatureModel形式に変換して、元のFeatureModelと一致するか確認
         binary_feature_model = self.feature_data.feature
-        feature_model = convert_bynary_to_feature_model(binary_feature_model)
+        feature_model = feature_model_from_binary(binary_feature_model)
         self.assertIsInstance(feature_model, FeatureModel)
         self.assertEqual(feature_model.labels, self.feature_model.labels)
         self.assertEqual(feature_model.model.get_params(), self.feature_model.model.get_params())
@@ -50,7 +52,7 @@ class TestTrainingGroup(TestCase):
     def test_update_feature_model(self):
         # FeatureModelを更新し、保存後に更新が反映されていることを確認
         updated_feature_model = get_random_feature_model()
-        binary_updated_feature_model = convert_to_binary_feature_model(updated_feature_model)
+        binary_updated_feature_model = feature_model_to_binary(updated_feature_model)
         self.feature_data.feature = binary_updated_feature_model
         self.feature_data.save()
         self.assertEqual(self.feature_data.feature, binary_updated_feature_model)

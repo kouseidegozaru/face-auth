@@ -5,7 +5,8 @@ from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from allauth.account.models import EmailAddress
 from recognizer.models import TrainingGroup, FeatureData
-from recognizer.tests.tools.feature_model_generator import get_random_feature_model, convert_to_binary_feature_model
+from recognizer.tests.tools.feature_model_generator import get_random_feature_model
+from recognizer.repository.save_model import feature_model_to_binary
 import os
 import uuid
 from unittest.mock import patch
@@ -38,7 +39,7 @@ class TestPredictView(APITestCase):
         
         # テスト用の特徴モデルの作成
         self.feature_model = get_random_feature_model()
-        self.binary_feature_model = convert_to_binary_feature_model(self.feature_model)
+        self.binary_feature_model = feature_model_to_binary(self.feature_model)
         # テスト用のFeatureDataの作成
         self.feature_data = FeatureData.objects.create(
             group=self.group,
