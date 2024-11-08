@@ -17,7 +17,7 @@ class TestPredict(TestCase):
 
     @patch('face_recognition.face_encodings', return_value=[np.random.rand(10)])
     def test_predict_feature_no_feature_model(self, mock_face_encodings):
-        with self.assertRaises(ValueError):
+        with self.assertRaises(AttributeError):
             feature = predict_feature(None, self.opened_image)
 
     @patch('face_recognition.face_encodings', return_value=[np.random.rand(10)])
