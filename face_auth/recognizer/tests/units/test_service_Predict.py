@@ -1,5 +1,5 @@
 from django.test import TestCase
-from face_auth.recognizer.tests.tools.image_generator import get_test_image
+from recognizer.tests.tools.image_generator import get_test_image
 from recognizer.services.recognize.recognize import predict_feature
 from recognizer.tests.tools.feature_model_generator import get_random_feature_model
 
