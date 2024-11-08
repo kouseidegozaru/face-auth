@@ -7,6 +7,7 @@ from recognizer.services.recognize.recognize import train_feature
 from recognizer.services.recognize.feature_models import FeatureModel
 from recognizer.services.recognize.types import LearningDataSet
 import os
+from recognizer.tests.tools.clear_test_data import clear_media
 
 
 class TestTrain(TestCase):
@@ -17,22 +18,18 @@ class TestTrain(TestCase):
             password='test_password',
         )
         self.group = TrainingGroup.objects.create(name='test_group', owner=self.user)
-        self.file_paths = []
 
         # データセットの作成
         self.dataset = LearningDataSet()
         for i in range(10):
             # 画像の作成
             image = SimpleUploadedFile(f"test{i}.jpg", b"test_image_data", content_type="image/jpeg")
-            self.file_paths.append(image.path)
-            TrainingData.objects.create(group=self.group, image=image, label=f"test{i}")
+            training_data = TrainingData.objects.create(group=self.group, image=image, label=f"test{i}")
             # データセットに追加
-            self.dataset.add(f"test{i}", image.path)
+            self.dataset.add(f"test{i}", training_data.image.path)
 
     def tearDown(self):
-        for path in self.file_paths:
-            if os.path.exists(path):
-                os.remove(path)
+        clear_media()
 
     @patch('recognizer.services.recognize.recognize.detect_face', side_effect=lambda image: image) # 画像をそのまま返す
     def test_train_feature(self, mock_detect_face):

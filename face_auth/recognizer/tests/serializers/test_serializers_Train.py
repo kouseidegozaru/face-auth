@@ -4,6 +4,7 @@ from recognizer.models import TrainingGroup, TrainingData
 from recognizer.serializers.recognize_serializers import TrainSerializer
 from django.core.files.uploadedfile import SimpleUploadedFile
 import os
+from recognizer.tests.tools.clear_test_data import clear_media
 
 class TestTrainSerializer(TestCase):
 
@@ -30,14 +31,10 @@ class TestTrainSerializer(TestCase):
             label="label2"
         )
 
-        # 削除対象のファイルパスを保持するリスト
-        self.image_paths = [self.image1.image.path, self.image2.image.path]
 
     def tearDown(self):
         # 画像ファイルを削除
-        for image_path in self.image_paths:
-            if image_path and os.path.exists(image_path):
-                os.remove(image_path)
+        clear_media()
 
     def test_validate_success(self):
         # 正常なトレーニングシリアライザーの検証

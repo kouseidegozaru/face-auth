@@ -4,6 +4,7 @@ from recognizer.models import TrainingData, TrainingGroup
 from recognizer.serializers.models_serializers import TrainingDataSerializer
 from django.core.files.uploadedfile import SimpleUploadedFile
 import os
+from recognizer.tests.tools.clear_test_data import clear_media
 
 
 class TestTrainingDataSerializer(TestCase):
@@ -26,14 +27,10 @@ class TestTrainingDataSerializer(TestCase):
             label='test_label'
         )
 
-        # 削除対象のファイルパスを保持するリスト
-        self.image_paths = [self.training_data.image.path]
 
     def tearDown(self):
         # テスト終了後に生成されたすべての画像ファイルを削除
-        for path in self.image_paths:
-            if os.path.exists(path):
-                os.remove(path)
+        clear_media()
 
     def test_create(self):
         # シリアライザーの作成テスト
@@ -79,9 +76,7 @@ class TestTrainingDataSerializer(TestCase):
         self.assertTrue(serializer.is_valid())
         updated_training_data = serializer.save()
         self.assertEqual(os.path.basename(updated_training_data.image.name), "updated_image.jpg")
-        
-        # 削除対象のファイルパスを保持するリストに追加
-        self.image_paths.append(updated_training_data.image.path)
+
 
     def test_update_fail_image_required(self):
         # シリアライザーのimage更新失敗テスト

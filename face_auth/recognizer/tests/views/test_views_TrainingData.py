@@ -7,6 +7,7 @@ from allauth.account.models import EmailAddress
 from recognizer.models import TrainingData, TrainingGroup
 import os
 import uuid
+from recognizer.tests.tools.clear_test_data import clear_media
 
 
 class TestTrainingDataViewSet(APITestCase):
@@ -39,15 +40,11 @@ class TestTrainingDataViewSet(APITestCase):
             label='test_label',
             image=SimpleUploadedFile("test_image.jpg", b"random_image_data", content_type="image/jpeg")
         )
-        # 作成した画像パスを保持
-        self.image_paths = [self.training_data.image.path]
 
 
     def tearDown(self):
         # 作成した画像ファイルの削除
-        for path in self.image_paths:
-            if os.path.exists(path):
-                os.remove(path)
+        clear_media()
 
     def test_list_training_data(self):
         # TrainingDataの一覧取得テスト

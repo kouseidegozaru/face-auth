@@ -8,6 +8,7 @@ from recognizer.models import TrainingGroup, TrainingData
 import os
 import uuid
 from unittest.mock import patch
+from recognizer.tests.tools.clear_test_data import clear_media
 
 class TestTrainView(APITestCase):
 
@@ -39,9 +40,6 @@ class TestTrainView(APITestCase):
             )
         )
 
-        # 削除対象のファイルパスを保持するリスト
-        self.image_paths = [self.data1.image.path, self.data2.image.path]
-
         # ユーザーのメールアドレスを認証済みに設定
         EmailAddress.objects.create(user=self.user, email=self.user.email, verified=True, primary=True)
         # 認証トークンの取得
@@ -58,9 +56,7 @@ class TestTrainView(APITestCase):
 
     def tearDown(self):
         # 削除対象のファイルを削除する
-        for path in self.image_paths:
-            if os.path.exists(path):
-                os.remove(path)
+        clear_media()
 
     @patch('recognizer.services.recognize.recognize.detect_face', side_effect=lambda image: image)
     @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
