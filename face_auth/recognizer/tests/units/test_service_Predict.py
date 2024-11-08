@@ -6,11 +6,10 @@ from recognizer.tests.tools.feature_model_generator import get_random_feature_mo
 class TestPredict(TestCase):
     def setUp(self):
         self.opened_image = get_test_image()
-
-        self.feature_model = get_random_feature_model(self.feature_model, self.opened_image)
+        self.feature_model = get_random_feature_model()
 
     def test_predict_feature(self):
-        feature = predict_feature()
+        feature = predict_feature(self.feature_model, self.opened_image)
         self.assertIsInstance(feature, str)
 
     def test_predict_feature_no_feature_model(self):
