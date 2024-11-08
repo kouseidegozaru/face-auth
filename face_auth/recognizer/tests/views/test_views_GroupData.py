@@ -6,6 +6,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from allauth.account.models import EmailAddress
 from recognizer.models import TrainingGroup, TrainingData
 import os
+from recognizer.tests.tools.clear_test_data import clear_media
 
 class TestGroupDataViewSet(APITestCase):
     def setUp(self):
@@ -33,14 +34,10 @@ class TestGroupDataViewSet(APITestCase):
         self.group = TrainingGroup.objects.create(name='test_group', owner=self.user)
         # テスト用の画像
         self.image = SimpleUploadedFile("test_image.jpg", b"random_image_data", content_type="image/jpeg")
-        # 作成した画像パスを保持する変数
-        self.image_paths = []
 
     def tearDown(self):
         # 作成した画像パスを削除
-        for path in self.image_paths:
-            if os.path.exists(path):
-                os.remove(path)
+        clear_media()
 
     def test_create_group_data(self):
         # テスト用のTrainingDataの作成
@@ -55,7 +52,6 @@ class TestGroupDataViewSet(APITestCase):
         self.assertIsNotNone(training_data)
         self.assertEqual(training_data.label, 'test_label')
         
-        self.image_paths.append(training_data.image.path)
 
     def test_get_group_data(self):
         # テスト用のTrainingDataの取得
@@ -66,8 +62,6 @@ class TestGroupDataViewSet(APITestCase):
             label='test_label',
             image=self.image
         )
-        # 作成した画像パスを保持
-        self.image_paths.append(training_data.image.path)
         # APIリクエスト
         response = self.client.get(url)
         # レスポンスの検証

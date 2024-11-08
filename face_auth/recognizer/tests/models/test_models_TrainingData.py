@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from recognizer.models import TrainingData, TrainingGroup
 from django.core.files.uploadedfile import SimpleUploadedFile
 import os
+from recognizer.tests.tools.clear_test_data import clear_media
 
 class TestTrainingData(TestCase):
     def setUp(self):
@@ -26,15 +27,10 @@ class TestTrainingData(TestCase):
             image=self.random_image,
             label='test_label'
         )
-        
-        # 削除対象のファイルパスを保持するリスト
-        self.image_paths = [self.training_data.image.path]
 
     def tearDown(self):
         # テスト終了後に生成されたすべての画像ファイルを削除
-        for path in self.image_paths:
-            if os.path.isfile(path):
-                os.remove(path)
+        clear_media()
 
     def test_create(self):
         # TrainingDataが1件作成されていることを確認
@@ -74,8 +70,6 @@ class TestTrainingData(TestCase):
         self.training_data.image = updated_image
         self.training_data.save()
         
-        # 更新後の画像パスを削除対象リストに追加
-        self.image_paths.append(self.training_data.image.path)
         self.assertEqual(os.path.basename(self.training_data.image.name), "updated_image.jpg")
 
     def test_delete(self):
