@@ -66,11 +66,7 @@ class TrainingDataViewSet(viewsets.ViewSet):
         data = get_object_or_404(TrainingData, pk=pk, group__owner=request.user)
         serializer = TrainingDataSerializer(data, data=request.data, partial=True)
         if serializer.is_valid():
-            if "image" in serializer.validated_data:
-                data.image = serializer.validated_data["image"]
-            if "label" in serializer.validated_data:
-                data.label = serializer.validated_data["label"]
-            data.save()
+            serializer.save()
             return Response(TrainingDataSerializer(data).data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
