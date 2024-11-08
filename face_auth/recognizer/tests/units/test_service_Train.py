@@ -24,10 +24,10 @@ class TestTrain(TestCase):
         for i in range(10):
             # 画像の作成
             image = SimpleUploadedFile(f"test{i}.jpg", b"test_image_data", content_type="image/jpeg")
-            self.file_paths.append(image.path)
-            TrainingData.objects.create(group=self.group, image=image, label=f"test{i}")
+            training_data = TrainingData.objects.create(group=self.group, image=image, label=f"test{i}")
+            self.file_paths.append(training_data.image.path)
             # データセットに追加
-            self.dataset.add(f"test{i}", image.path)
+            self.dataset.add(f"test{i}", training_data.image.path)
 
     def tearDown(self):
         for path in self.file_paths:
