@@ -35,8 +35,7 @@ class TrainingGroupViewSet(viewsets.ViewSet):
         group = get_object_or_404(TrainingGroup, pk=pk, owner=request.user)
         serializer = TrainingGroupSerializer(group, data=request.data, partial=True)
         if serializer.is_valid():
-            group.name = serializer.validated_data["name"]
-            group.save()
+            serializer.save()
             return Response(TrainingGroupSerializer(group).data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
