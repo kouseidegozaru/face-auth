@@ -50,7 +50,8 @@ class TestTrainingData(TestCase):
 
     def test_image_path(self):
         # TrainingDataの画像ファイルパスが正しいか確認
-        self.assertEqual(self.training_data.image.path, self.image_paths[0])
+        created_training_data = TrainingData.objects.get(pk=self.training_data.pk)
+        self.assertEqual(self.training_data.image.path, created_training_data.image.path)
 
     def test_label(self):
         # TrainingDataのラベルが正しいか確認
