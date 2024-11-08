@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.shortcuts import get_object_or_404
-from ..models import TrainingGroup
+from ..models import TrainingGroup, TrainingData
 from ..services.validations.validations import is_exist_face
 from ..services.tools.image_operations import open_image
 
@@ -10,9 +10,11 @@ class TrainSerializer(serializers.Serializer):
     def validate(self, data):
         # トレーニンググループの取得
         group = get_object_or_404(TrainingGroup, pk=data['pk'])
+        # トレーニングデータの件数を取得
+        training_data_count = TrainingData.objects.filter(group=group).count()
 
         # グループに画像ファイルが2種類以上あるか
-        if group.images.count() < 2:
+        if training_data_count < 2:
             raise serializers.ValidationError("You must upload at least two images to train this group.")
 
         return data
