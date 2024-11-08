@@ -44,7 +44,7 @@ class TestGroupDataViewSet(APITestCase):
 
     def test_create_group_data(self):
         # テスト用のTrainingDataの作成
-        url = reverse('group_data', args=[self.group.id])
+        url = reverse('group-data', args=[self.group.id])
         data = {'label': 'test_label', 'image': self.image}
         # APIリクエスト
         response = self.client.post(url, data=data)
@@ -59,7 +59,7 @@ class TestGroupDataViewSet(APITestCase):
 
     def test_get_group_data(self):
         # テスト用のTrainingDataの取得
-        url = reverse('group_data', args=[self.group.id])
+        url = reverse('group-data', args=[self.group.id])
         # テスト用のTrainingDataの作成
         training_data = TrainingData.objects.create(
             group=self.group,
@@ -77,7 +77,7 @@ class TestGroupDataViewSet(APITestCase):
 
     def test_unauthorized_user_access(self):
         # 他のユーザーによるアクセス制限テスト
-        url = reverse('group_data', args=[self.group.id])
+        url = reverse('group-data', args=[self.group.id])
 
         another_user = get_user_model().objects.create_user(
             email='another_test_email@example.com',
