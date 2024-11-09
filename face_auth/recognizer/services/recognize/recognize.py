@@ -27,7 +27,7 @@ def train_feature(data_set: LearningDataSet) -> FeatureModel:
     face_features = list(map(extract_face_feature, face_images))
 
     # 特徴量が取得できなかった場合のエラーチェック
-    if None in face_features:
+    if any(feature is None for feature in face_features):
         raise ValueError("Error: Failed to extract face features from one or more images")
 
     # 学習
