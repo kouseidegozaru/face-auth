@@ -5,7 +5,7 @@ from django.contrib.auth import get_user_model
 from django.core.files.uploadedfile import SimpleUploadedFile
 from allauth.account.models import EmailAddress
 from recognizer.models import TrainingGroup, TrainingData
-import os
+import numpy as np
 import uuid
 from unittest.mock import patch
 from recognizer.tests.tools.clear_test_data import clear_media
@@ -60,8 +60,9 @@ class TestTrainView(APITestCase):
         clear_media()
 
     @patch('recognizer.services.recognize.recognize.detect_face', side_effect=lambda image: image)
+    @patch('recognizer.services.recognize.recognize.extract_face_feature', return_value=np.random.rand(10))
     @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
-    def test_post(self, mock_is_exist_face, mock_detect_face):
+    def test_post(self, mock_is_exist_face, mock_extract_face_feature, mock_detect_face):
         # POSTリクエストのテスト
         url = reverse('train', args=[self.group.pk])
         response = self.client.post(url)
@@ -75,16 +76,18 @@ class TestTrainView(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
 
     @patch('recognizer.services.recognize.recognize.detect_face', side_effect=lambda image: image)
+    @patch('recognizer.services.recognize.recognize.extract_face_feature', return_value=np.random.rand(10))
     @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
-    def test_post_group_not_found(self, mock_is_exist_face, mock_detect_face):
+    def test_post_group_not_found(self, mock_is_exist_face, mock_extract_face_feature, mock_detect_face):
         # POSTリクエストの失敗テスト
         url = reverse('train', args=[uuid.uuid4()])
         response = self.client.post(url)
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     @patch('recognizer.services.recognize.recognize.detect_face', side_effect=lambda image: image)
+    @patch('recognizer.services.recognize.recognize.extract_face_feature', return_value=np.random.rand(10))
     @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
-    def test_post_data_not_enough(self, mock_is_exist_face, mock_detect_face):
+    def test_post_data_not_enough(self, mock_is_exist_face, mock_extract_face_feature, mock_detect_face):
         # POSTリクエストの失敗テスト
         self.data1.delete()
         url = reverse('train', args=[self.group.pk])

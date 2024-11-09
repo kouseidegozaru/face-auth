@@ -6,7 +6,7 @@ from recognizer.models import TrainingGroup, TrainingData
 from recognizer.services.recognize.recognize import train_feature
 from recognizer.services.recognize.feature_models import FeatureModel
 from recognizer.services.recognize.types import LearningDataSet
-import os
+import numpy as np
 from recognizer.tests.tools.clear_test_data import clear_media
 from recognizer.tests.tools.image_generator import get_test_image_as_bytes
 
@@ -33,13 +33,15 @@ class TestTrain(TestCase):
         clear_media()
 
     @patch('recognizer.services.recognize.recognize.detect_face', side_effect=lambda image: image) # 画像をそのまま返す
-    def test_train_feature(self, mock_detect_face):
+    @patch('recognizer.services.recognize.recognize.extract_face_feature', return_value=np.random.rand(10))
+    def test_train_feature(self, mock_detect_face, mock_extract_face_feature):
         # 学習
         feature_model = train_feature(self.dataset)
         self.assertIsInstance(feature_model, FeatureModel)
 
     @patch('recognizer.services.recognize.recognize.detect_face', side_effect=lambda image: image)
-    def test_train_feature_with_empty_dataset(self, mock_detect_face):
+    @patch('recognizer.services.recognize.recognize.extract_face_feature', return_value=np.random.rand(10))
+    def test_train_feature_with_empty_dataset(self, mock_detect_face, mock_extract_face_feature):
         # 空のデータセットの場合、例外を発生させる
         dataset = LearningDataSet()
         with self.assertRaises(ValueError):
