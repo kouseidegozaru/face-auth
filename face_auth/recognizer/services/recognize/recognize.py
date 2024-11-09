@@ -22,8 +22,8 @@ def train_feature(data_set: LearningDataSet) -> FeatureModel:
 
     # 特徴量抽出
     image_paths = map(lambda x: x.image_path, data_set.data)
-    images = list(map(lambda x: open_image(x), image_paths))
-    face_images = list(map(detect_face, images))    
+    images = map(lambda x: open_image(x), image_paths)
+    face_images = map(detect_face, images)
     face_features = list(map(extract_face_feature, face_images))
 
     # 特徴量が取得できなかった場合のエラーチェック
