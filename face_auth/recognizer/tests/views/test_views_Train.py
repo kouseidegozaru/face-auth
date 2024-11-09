@@ -9,6 +9,7 @@ import os
 import uuid
 from unittest.mock import patch
 from recognizer.tests.tools.clear_test_data import clear_media
+from recognizer.tests.tools.image_generator import get_test_image_as_bytes
 
 class TestTrainView(APITestCase):
 
@@ -29,14 +30,14 @@ class TestTrainView(APITestCase):
             label=' test_data1',
             group=self.group,
             image=SimpleUploadedFile(
-                "test_image1.jpg", b"random_image_data", content_type="image/jpeg"
+                "test_image1.jpg", get_test_image_as_bytes(), content_type="image/jpeg"
             )
         )
         self.data2 = TrainingData.objects.create(
             label=' test_data2',
             group=self.group,
             image=SimpleUploadedFile(
-                "test_image2.jpg", b"random_image_data", content_type="image/jpeg"
+                "test_image2.jpg", get_test_image_as_bytes(), content_type="image/jpeg"
             )
         )
 
