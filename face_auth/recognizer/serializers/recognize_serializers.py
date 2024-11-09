@@ -1,22 +1,25 @@
 from rest_framework import serializers
-from django.shortcuts import get_object_or_404
-from ..models import TrainingGroup
+from ..models import TrainingGroup, TrainingData
 from ..services.validations.validations import is_exist_face
 from ..services.tools.image_operations import open_image
+
+def get_object_or_exception(model, pk):
+    try:
+        return model.objects.get(pk=pk)
+    except model.DoesNotExist:
+        raise serializers.ValidationError(f"{model.__name__} does not exist.")
 
 class TrainSerializer(serializers.Serializer):
     pk = serializers.UUIDField()  # pkはURLパラメータを想定
 
     def validate(self, data):
         # トレーニンググループの取得
-        group = get_object_or_404(TrainingGroup, pk=data['pk'])
-
-        # オーナーの確認
-        if group.owner != self.context['request'].user:
-            raise serializers.ValidationError("You do not have permission to train this group.")
+        group = get_object_or_exception(TrainingGroup, pk=data['pk'])
+        # トレーニングデータの件数を取得
+        training_data_count = TrainingData.objects.filter(group=group).count()
 
         # グループに画像ファイルが2種類以上あるか
-        if group.images.count() < 2:
+        if training_data_count < 2:
             raise serializers.ValidationError("You must upload at least two images to train this group.")
 
         return data
@@ -28,11 +31,7 @@ class PredictSerializer(serializers.Serializer):
 
     def validate(self, data):
         # トレーニンググループの取得
-        group = get_object_or_404(TrainingGroup, pk=data['pk'])
-
-        # オーナーの確認
-        if group.owner != self.context['request'].user:
-            raise serializers.ValidationError("You do not have permission to predict this group.")
+        group = get_object_or_exception(TrainingGroup, pk=data['pk'])
 
         # 特徴モデルが存在するか確認
         if not group.feature_model:

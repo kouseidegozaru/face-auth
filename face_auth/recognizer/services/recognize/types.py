@@ -6,9 +6,11 @@ class LearningDataRecordType():
         self._label = label
         self._image_path = image_path
 
+    @property
     def image_path(self) -> str:
         return self._image_path
     
+    @property
     def label(self) -> str:
         return self._label
 

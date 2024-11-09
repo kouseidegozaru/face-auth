@@ -23,13 +23,13 @@ class TrainView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # トレーニンググループの取得
-        group = get_object_or_404(TrainingGroup, pk=pk)
+        group = get_object_or_404(TrainingGroup, pk=pk, owner=request.user)
         # データセットの作成
-        dataset = create_training_data_set(group.id)
+        dataset = create_training_data_set(group)
         # 学習
         feature_model = train_feature(dataset)
         # モデルの保存
-        save_feature_model(feature_model, group.id)
+        save_feature_model(feature_model, group)
         
         return Response(status=status.HTTP_200_OK)
 
@@ -44,7 +44,7 @@ class PredictView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # トレーニンググループの取得
-        group = get_object_or_404(TrainingGroup, pk=pk)  
+        group = get_object_or_404(TrainingGroup, pk=pk, owner=request.user)  
         # 画像の読み込み
         image_data = open_image(serializer.validated_data['image'])
         # 特徴モデルの読み込み

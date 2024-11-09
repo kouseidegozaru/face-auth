@@ -1,14 +1,13 @@
 from ..models import TrainingData, TrainingGroup
 from ..services.recognize.types import LearningDataSet
 
-def create_training_data_set(group_id) -> LearningDataSet:
+def create_training_data_set(training_group: TrainingGroup) -> LearningDataSet:
     """
     TrainingDataから
     学習に必要なデータセットを作成
     """
 
     # 学習対象のTrainingDataを取得
-    training_group = TrainingGroup.objects.get(id=group_id)
     training_datas = TrainingData.objects.filter(group=training_group)
 
     # 学習に必要なデータセットを作成

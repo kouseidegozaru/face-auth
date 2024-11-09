@@ -22,12 +22,12 @@ def train_feature(data_set: LearningDataSet) -> FeatureModel:
 
     # 特徴量抽出
     image_paths = map(lambda x: x.image_path, data_set.data)
-    images = list(map(lambda x: open_image(x), image_paths))
-    face_images = list(map(detect_face, images))    
+    images = map(lambda x: open_image(x), image_paths)
+    face_images = map(detect_face, images)
     face_features = list(map(extract_face_feature, face_images))
 
     # 特徴量が取得できなかった場合のエラーチェック
-    if None in face_features:
+    if any(feature is None for feature in face_features):
         raise ValueError("Error: Failed to extract face features from one or more images")
 
     # 学習
@@ -76,7 +76,7 @@ def extract_face_feature(face_image: np.ndarray) -> np.ndarray:
     """
     # 画像の有無
     if face_image is None:
-        raise ValueError("Error: Image is None")
+        raise ValueError("Error: FaceImage is None")
     
     # 顔画像から128次元の特徴ベクトルを抽出
     face_encoding = face_recognition.face_encodings(face_image)

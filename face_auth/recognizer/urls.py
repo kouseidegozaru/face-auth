@@ -13,6 +13,10 @@ training_group_detail = TrainingGroupViewSet.as_view({
     'delete': 'destroy', # DELETE: /training-groups/<uuid:pk>/ - TrainingGroup削除
 })
 
+training_data_list = TrainingDataViewSet.as_view({
+    'get': 'list',      # GET: /training-data/ - TrainingData一覧
+})
+
 training_data_detail = TrainingDataViewSet.as_view({
     'get': 'retrieve',   # GET: /training-data/<uuid:pk>/ - 特定のTrainingData取得
     'patch': 'update',   # PATCH: /training-data/<uuid:pk>/ - TrainingData更新
@@ -27,6 +31,7 @@ group_data_list_create = GroupDataViewSet.as_view({
 urlpatterns = [
     path('training-groups/', training_group_list, name='training-group-list'),                   # GET, POST
     path('training-groups/<uuid:pk>/', training_group_detail, name='training-group-detail'),     # GET, PATCH, DELETE
+    path('training-data/', training_data_list, name='training-data-list'),                       # GET
     path('training-data/<uuid:pk>/', training_data_detail, name='training-data-detail'),         # GET, PATCH, DELETE
     path('training-groups/<uuid:group_pk>/images/', group_data_list_create, name='group-data'),  # GET, POST for images in group
     path('train/<uuid:pk>/', TrainView.as_view(), name='train'),                                 # Train model

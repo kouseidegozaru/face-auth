@@ -17,8 +17,13 @@ def save_feature_model(feature_model : FeatureModel, group : TrainingGroup):
     # 特徴モデルをバイナリ形式に変換
     binary_feature = feature_model_to_binary(feature_model)
 
-    # 保存対象のインスタンスを取得
-    feature_file = FeatureData.objects.get(group=group)
+    # 特徴モデルが存在するか確認
+    if FeatureData.objects.filter(group=group).exists():
+        # 存在する場合は取得
+        feature_file = FeatureData.objects.get(group=group)
+    else:
+        # 存在しない場合は新規作成
+        feature_file = FeatureData.objects.create(group=group)
 
     # データを更新
     feature_file.feature = binary_feature
