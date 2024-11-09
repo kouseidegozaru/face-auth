@@ -76,7 +76,7 @@ def extract_face_feature(face_image: np.ndarray) -> np.ndarray:
     """
     # 画像の有無
     if face_image is None:
-        raise ValueError("Error: Image is None")
+        raise ValueError("Error: FaceImage is None")
     
     # 顔画像から128次元の特徴ベクトルを抽出
     face_encoding = face_recognition.face_encodings(face_image)
