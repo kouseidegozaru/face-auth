@@ -1,5 +1,6 @@
 from rest_framework import permissions
 from recognizer.models import TrainingGroup, TrainingData
+from rest_framework.exceptions import NotFound
 
 class IsGroupOwnerOnly(permissions.BasePermission):
     """
@@ -18,8 +19,8 @@ class IsGroupOwnerOnly(permissions.BasePermission):
             # pkに基づいてオブジェクトを取得
             group = TrainingGroup.objects.get(pk=pk)
         except TrainingGroup.DoesNotExist:
-            # オブジェクトが存在しない場合はアクセスを拒否
-            return False
+            # オブジェクトが存在しない場合は404
+            raise NotFound(detail="TrainingGroup does not exist.")
 
         # リクエストユーザーがオブジェクトの作成者であれば許可
         return group.owner == request.user
