@@ -1,7 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
-from recognizer.views.permissions import IsGroupOwnerOnly
+from recognizer.views.permissions import IsGroupOwnerOnly, IsGroupDataOwnerOnly
 from rest_framework.decorators import action
 from ..models import TrainingGroup, TrainingData
 from ..serializers.models_serializers import TrainingGroupSerializer, TrainingDataSerializer
@@ -48,7 +48,7 @@ class TrainingGroupViewSet(viewsets.ViewSet):
 
 
 class TrainingDataViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsGroupDataOwnerOnly]
 
     # すべての画像データを取得
     def list(self, request):

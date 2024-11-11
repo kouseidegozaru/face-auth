@@ -24,3 +24,30 @@ class IsGroupOwnerOnly(permissions.BasePermission):
 
         # リクエストユーザーがオブジェクトの作成者であれば許可
         return group.owner == request.user
+
+
+class IsGroupDataOwnerOnly(permissions.BasePermission):
+    """
+    リクエストのpkから取得したデータのグループの所有者のみ
+    アクセスを許可するパーミッション
+    """
+    def has_permission(self, request, view):
+        # URLからpkを取得
+        pk = view.kwargs.get('pk')
+
+        # pkが指定されていない場合はTrue
+        if pk is None:
+            return True
+
+        try:
+            # pkに基づいてオブジェクトを取得
+            group = TrainingData.objects.get(pk=pk).group
+        except TrainingData.DoesNotExist:
+            # オブジェクトが存在しない場合は404
+            raise NotFound(detail="TrainingData does not exist.")
+        except TrainingGroup.DoesNotExist:
+            # オブジェクトが存在しない場合は404
+            raise NotFound(detail="TrainingGroup does not exist.")
+
+        # リクエストユーザーがオブジェクトの作成者であれば許可
+        return group.owner == request.user
