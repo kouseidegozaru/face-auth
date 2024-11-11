@@ -66,14 +66,14 @@ class TestTrainView(APITestCase):
         # POSTリクエストのテスト
         url = reverse('train', args=[self.group.pk])
         response = self.client.post(url)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(TrainingData.objects.count(), 2)
 
     def test_post_face_not_found(self):
         # POSTリクエストの失敗テスト
         url = reverse('train', args=[self.group.pk])
         response = self.client.post(url)
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
     @patch('recognizer.services.recognize.recognize.detect_face', side_effect=lambda image: image)
     @patch('recognizer.services.recognize.recognize.extract_face_feature', return_value=np.random.rand(10))
@@ -92,7 +92,7 @@ class TestTrainView(APITestCase):
         self.data1.delete()
         url = reverse('train', args=[self.group.pk])
         response = self.client.post(url)
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertEqual(response.status_code, status.HTTP_412_PRECONDITION_FAILED)
 
     def test_get_failed(self):
         # GETリクエストの失敗テスト
