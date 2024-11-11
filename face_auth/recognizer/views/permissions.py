@@ -8,8 +8,13 @@ class IsGroupOwnerOnly(permissions.BasePermission):
     アクセスを許可するパーミッション
     """
     def has_permission(self, request, view):
-        # URLからpkを取得
+        # URLからpkまたはgroup_pkの存在する方を取得
         pk = view.kwargs.get('pk')
+        group_pk = view.kwargs.get('group_pk')
+
+        # group_pkを優先
+        if group_pk is not None:
+            pk = group_pk
 
         # pkが指定されていない場合はTrue
         if pk is None:
