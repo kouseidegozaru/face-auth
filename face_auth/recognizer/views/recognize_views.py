@@ -3,6 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
+from recognizer.views.permissions import IsGroupOwnerOnly
 
 from ..models import TrainingGroup
 from ..repository.save_model import save_feature_model
@@ -14,7 +15,7 @@ from ..services.recognize.recognize import train_feature, predict_feature
 
 class TrainView(APIView):
     # 認証済みのユーザーのみアクセス可能
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsGroupOwnerOnly]
 
     def post(self, request, pk):
         # シリアライザーの初期化とバリデーション
@@ -40,7 +41,7 @@ class TrainView(APIView):
 
 
 class PredictView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsGroupOwnerOnly]
 
     def post(self, request, pk):
         # シリアライザーの初期化とバリデーション

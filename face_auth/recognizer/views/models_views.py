@@ -1,6 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
+from recognizer.views.permissions import IsGroupOwnerOnly, IsGroupDataOwnerOnly
 from rest_framework.decorators import action
 from ..models import TrainingGroup, TrainingData
 from ..serializers.models_serializers import TrainingGroupSerializer, TrainingDataSerializer
@@ -8,7 +9,7 @@ from django.shortcuts import get_object_or_404
 
 
 class TrainingGroupViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsGroupOwnerOnly]
 
     # すべてのグループを取得
     def list(self, request):
@@ -47,7 +48,7 @@ class TrainingGroupViewSet(viewsets.ViewSet):
 
 
 class TrainingDataViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsGroupDataOwnerOnly]
 
     # すべての画像データを取得
     def list(self, request):
@@ -78,7 +79,7 @@ class TrainingDataViewSet(viewsets.ViewSet):
 
 
 class GroupDataViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsAuthenticated, IsGroupOwnerOnly]
 
     # 特定のグループのすべての画像を取得
     @action(detail=True, methods=["get"], url_path="images")
