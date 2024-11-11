@@ -50,6 +50,13 @@ class TestTrainingGroupSerializer(TestCase):
 
     def test_update_fail_owner_read_only(self):
         # シリアライザーのowner更新失敗テスト(ownerは読み取り専用)
-        serializer = TrainingGroupSerializer(instance=self.training_group, data={"name": "updated_group", "owner": self.user})
-        self.assertFalse(serializer.is_valid())
-        self.assertIn("owner", serializer.errors)
+        another_user = get_user_model().objects.create_user(
+            email='another_test_email@example.com', 
+            name='another_test_user',
+            password='test_password',
+        )
+        serializer = TrainingGroupSerializer(instance=self.training_group, data={"name": "updated_group", "owner": another_user})
+        self.assertTrue(serializer.is_valid())
+        updated_group = serializer.save()
+        self.assertEqual(updated_group.name, "updated_group")
+        self.assertEqual(updated_group.owner, self.user) # オーナーは変更されない
