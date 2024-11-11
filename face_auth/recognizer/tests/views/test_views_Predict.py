@@ -6,6 +6,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from allauth.account.models import EmailAddress
 from recognizer.models import TrainingGroup, FeatureData
 from recognizer.tests.tools.feature_model_generator import get_random_feature_model
+from recognizer.tests.tools.image_generator import get_test_image_as_bytes
 from recognizer.repository.save_model import feature_model_to_binary
 import os
 import uuid
@@ -48,7 +49,7 @@ class TestPredictView(APITestCase):
 
         # 推論する画像の作成
         self.image = SimpleUploadedFile(
-            "test_image.jpg", b"random_image_data", content_type="image/jpeg"
+            "test_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg"
         )
 
     @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
