@@ -46,6 +46,13 @@ class TestPredictSerializer(TestCase):
         # シリアライザーが正常に検証されることを確認
         self.assertTrue(serializer.is_valid())
 
+    @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
+    def test_validate_fail_no_group(self, mock_is_exist_face):
+        # 存在しないトレーニンググループの検証
+        serializer = PredictSerializer(data={'pk': uuid.uuid4(), 'image': self.image})
+        self.assertFalse(serializer.is_valid())
+        self.assertIn("group", serializer.errors)
+
     @patch('recognizer.services.validations.validations.is_exist_face', return_value=False)
     def test_validate_fail_no_face_in_image(self, mock_is_exist_face):
         # 画像に顔が含まれていない場合
