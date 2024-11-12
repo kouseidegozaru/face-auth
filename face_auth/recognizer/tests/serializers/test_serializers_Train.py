@@ -1,10 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
-from recognizer.models import TrainingGroup, TrainingData
+from recognizer.models import TrainingGroup
 from recognizer.serializers.recognize_serializers import TrainSerializer
-from django.core.files.uploadedfile import SimpleUploadedFile
-import os
-from recognizer.tests.tools.clear_test_data import clear_media
 
 class TestTrainSerializer(TestCase):
 
@@ -18,23 +15,7 @@ class TestTrainSerializer(TestCase):
 
         # トレーニンググループの作成
         self.group = TrainingGroup.objects.create(name="test_group", owner=self.user)
-        
-        # テスト用の画像データを2つ作成
-        self.image1 = TrainingData.objects.create(
-            group=self.group,
-            image=SimpleUploadedFile("test_image1.jpg", b"test_image_data", content_type="image/jpeg"),
-            label="label1"
-        )
-        self.image2 = TrainingData.objects.create(
-            group=self.group,
-            image=SimpleUploadedFile("test_image2.jpg", b"test_image_data", content_type="image/jpeg"),
-            label="label2"
-        )
 
-
-    def tearDown(self):
-        # 画像ファイルを削除
-        clear_media()
 
     def test_validate_success(self):
         # 正常なトレーニングシリアライザーの検証
