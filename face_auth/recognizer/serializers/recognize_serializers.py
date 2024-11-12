@@ -1,7 +1,16 @@
 from rest_framework import serializers
+from rest_framework.exceptions import APIException
 from ..models import TrainingGroup, TrainingData, FeatureData
 from ..services.validations.validations import is_exist_face
 from ..services.tools.image_operations import open_image
+
+
+class PreconditionFailed(APIException):
+    """412エラーを返却するためのクラス"""
+    status_code = 412
+    default_detail = 'Precondition Failed.'
+    default_code = 'precondition_failed'
+
 
 def get_object_or_exception(model, pk):
     try:
@@ -20,7 +29,7 @@ class TrainSerializer(serializers.Serializer):
 
         # グループに画像ファイルが2種類以上あるか
         if training_data_count < 2:
-            raise serializers.ValidationError("You must upload at least two images to train this group.")
+            raise PreconditionFailed("You must upload at least two images to train this group.")
 
         return data
 
@@ -36,7 +45,7 @@ class PredictSerializer(serializers.Serializer):
 
         # 特徴モデルが存在するか確認
         if not is_exist_feature:
-            raise serializers.ValidationError("Feature model does not exist.")
+            raise PreconditionFailed(detail="Feature model does not exist.")
 
         # 画像の確認
         image_data = open_image(data.get('image'))
