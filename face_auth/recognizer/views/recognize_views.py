@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from recognizer.views.permissions import IsGroupOwnerOnly
 
-from ..models import TrainingGroup
+from ..models import TrainingGroup, TrainingData, FeatureData
 from ..repository.save_model import save_feature_model
 from ..repository.load_model import load_feature_model
 from ..repository.datasets import create_training_data_set
@@ -25,6 +25,10 @@ class TrainView(APIView):
 
         # トレーニンググループの取得
         group = get_object_or_404(TrainingGroup, pk=pk, owner=request.user)
+
+        # グループに画像ファイルが2種類以上あるか
+        if TrainingData.objects.filter(group=group).count() < 2:
+            return Response("You must upload at least two images to train this group.", status=status.HTTP_412_PRECONDITION_FAILED)
         
         try:
             # データセットの作成
@@ -50,8 +54,12 @@ class PredictView(APIView):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
         # トレーニンググループの取得
-        group = get_object_or_404(TrainingGroup, pk=pk, owner=request.user)  
-        
+        group = get_object_or_404(TrainingGroup, pk=pk, owner=request.user)
+
+        # 特徴モデルが存在するか確認
+        if not FeatureData.objects.filter(group=group).exists():
+            return Response("Feature model does not exist.", status=status.HTTP_412_PRECONDITION_FAILED)
+
         try:
             # 画像の読み込み
             image_data = open_image(serializer.validated_data['image'])
