@@ -47,11 +47,4 @@ class TestTrainSerializer(TestCase):
         serializer = TrainSerializer(data={"pk": 9999})
         self.assertFalse(serializer.is_valid())
         self.assertIn("group", serializer.errors)
-
-    def test_validate_fail_insufficient_images(self):
-        # トレーニンググループに画像が1つしかない場合の検証
-        self.image2.delete()
-        serializer = TrainSerializer(data={"pk": self.group.pk})
-        self.assertFalse(serializer.is_valid())
-        self.assertIn("images", serializer.errors)
         

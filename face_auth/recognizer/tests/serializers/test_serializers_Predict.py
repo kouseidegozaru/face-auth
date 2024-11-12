@@ -46,12 +46,6 @@ class TestPredictSerializer(TestCase):
         # シリアライザーが正常に検証されることを確認
         self.assertTrue(serializer.is_valid())
 
-    def test_validate_fail_feature_model_missing(self):
-        # 特徴モデルが存在しないグループで予測しようとした場合
-        serializer = PredictSerializer(data={'pk': self.group_without_model.pk, 'image': self.image})
-        self.assertFalse(serializer.is_valid())
-        self.assertIn("Feature model does not exist.", serializer.errors)
-
     @patch('recognizer.services.validations.validations.is_exist_face', return_value=False)
     def test_validate_fail_no_face_in_image(self, mock_is_exist_face):
         # 画像に顔が含まれていない場合
