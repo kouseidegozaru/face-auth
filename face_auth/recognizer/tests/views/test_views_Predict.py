@@ -52,7 +52,7 @@ class TestPredictView(APITestCase):
             "test_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg"
         )
 
-    @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
+    @patch('recognizer.serializers.recognize_serializers.is_exist_face', return_value=True)
     def test_post(self, mock_is_exist_face):
         # POSTリクエストのテスト
         url = reverse('predict', args=[self.group.pk])
@@ -65,14 +65,14 @@ class TestPredictView(APITestCase):
         response = self.client.post(url, {'image': self.image})
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
+    @patch('recognizer.serializers.recognize_serializers.is_exist_face', return_value=True)
     def test_post_group_not_found(self, mock_is_exist_face):
         # POSTリクエストの失敗テスト
         url = reverse('predict', args=[uuid.uuid4()])
         response = self.client.post(url, {'image': self.image})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
+    @patch('recognizer.serializers.recognize_serializers.is_exist_face', return_value=True)
     def test_post_feature_data_not_found(self, mock_is_exist_face):
         # POSTリクエストの失敗テスト
         self.feature_data.delete()
@@ -80,7 +80,7 @@ class TestPredictView(APITestCase):
         response = self.client.post(url, {'image': self.image})
         self.assertEqual(response.status_code, status.HTTP_412_PRECONDITION_FAILED)
 
-    @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
+    @patch('recognizer.serializers.recognize_serializers.is_exist_face', return_value=True)
     def test_post_another_user(self, mock_is_exist_face):
         # POSTリクエストの失敗テスト
         url = reverse('predict', args=[self.group.pk])
