@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from ..models import TrainingGroup, TrainingData
+from ..models import TrainingGroup, TrainingData, FeatureData
 from ..services.validations.validations import is_exist_face
 from ..services.tools.image_operations import open_image
 
@@ -32,9 +32,10 @@ class PredictSerializer(serializers.Serializer):
     def validate(self, data):
         # トレーニンググループの取得
         group = get_object_or_exception(TrainingGroup, pk=data['pk'])
+        is_exist_feature = FeatureData.objects.filter(group=group).exists()
 
         # 特徴モデルが存在するか確認
-        if not group.feature_model:
+        if not is_exist_feature:
             raise serializers.ValidationError("Feature model does not exist.")
 
         # 画像の確認
