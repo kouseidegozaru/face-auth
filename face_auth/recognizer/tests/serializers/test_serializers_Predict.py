@@ -38,11 +38,11 @@ class TestPredictSerializer(TestCase):
         # 存在しないトレーニンググループの検証
         serializer = PredictSerializer(data={'pk': uuid.uuid4(), 'image': self.image})
         self.assertFalse(serializer.is_valid())
-        self.assertIn("group", serializer.errors)
+        self.assertIn("TrainingGroup", *serializer.errors['non_field_errors'])
 
     @patch('recognizer.services.validations.validations.is_exist_face', return_value=False)
     def test_validate_fail_no_face_in_image(self, mock_is_exist_face):
         # 画像に顔が含まれていない場合
         serializer = PredictSerializer(data={'pk': self.group.pk, 'image': self.image})
         self.assertFalse(serializer.is_valid())
-        self.assertIn("画像に顔が見つかりません", serializer.errors)
+        self.assertIn("画像に顔が見つかりません", *serializer.errors['non_field_errors'])

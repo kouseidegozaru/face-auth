@@ -27,5 +27,5 @@ class TestTrainSerializer(TestCase):
         # 存在しないトレーニンググループの検証
         serializer = TrainSerializer(data={"pk": 9999})
         self.assertFalse(serializer.is_valid())
-        self.assertIn("group", serializer.errors)
+        self.assertIn("TrainingGroup", *serializer.errors['non_field_errors'])
         
