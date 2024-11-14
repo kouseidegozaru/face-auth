@@ -2,14 +2,13 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
-from django.core.files.uploadedfile import SimpleUploadedFile
+from recognizer.tests.tools.image_generator import SimpleUploadedImage
 from allauth.account.models import EmailAddress
 from recognizer.models import TrainingGroup, TrainingData
 import numpy as np
 import uuid
 from unittest.mock import patch
 from recognizer.tests.tools.clear_test_data import clear_media
-from recognizer.tests.tools.image_generator import get_test_image_as_bytes
 from recognizer.tests.views.Auther import AuthTestMixin
 
 class TestTrainView(APITestCase, AuthTestMixin):
@@ -30,16 +29,12 @@ class TestTrainView(APITestCase, AuthTestMixin):
         self.data1 = TrainingData.objects.create(
             label=' test_data1',
             group=self.group,
-            image=SimpleUploadedFile(
-                "test_image1.jpg", get_test_image_as_bytes(), content_type="image/jpeg"
-            )
+            image=SimpleUploadedImage(name="test_image1.jpg")
         )
         self.data2 = TrainingData.objects.create(
             label=' test_data2',
             group=self.group,
-            image=SimpleUploadedFile(
-                "test_image2.jpg", get_test_image_as_bytes(), content_type="image/jpeg"
-            )
+            image=SimpleUploadedImage(name="test_image2.jpg")
         )
 
         # ユーザーのメールアドレスを認証済みに設定

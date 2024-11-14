@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 from recognizer.models import TrainingData, TrainingGroup
-from django.core.files.uploadedfile import SimpleUploadedFile
+from recognizer.tests.tools.image_generator import SimpleUploadedImage
 import os
 from recognizer.tests.tools.clear_test_data import clear_media
 
@@ -16,10 +16,8 @@ class TestTrainingData(TestCase):
         # テスト用のTrainingGroupの作成
         self.group = TrainingGroup.objects.create(name='test_group', owner=self.user)
 
-        # テスト用のランダム画像をSimpleUploadedFileで生成
-        self.random_image = SimpleUploadedFile(
-            "test_image.jpg", b"random_image_data", content_type="image/jpeg"
-        )
+        # テスト用のランダム画像を生成
+        self.random_image = SimpleUploadedImage()
         
         # TrainingDataインスタンスの作成
         self.training_data = TrainingData.objects.create(
@@ -65,9 +63,7 @@ class TestTrainingData(TestCase):
 
     def test_update_image(self):
         # 画像を更新し、新しい画像ファイル名が正しいか確認
-        updated_image = SimpleUploadedFile(
-            "updated_image.jpg", b"updated_image_data", content_type="image/jpeg"
-        )
+        updated_image = SimpleUploadedImage(name="updated_image.jpg")
         self.training_data.image = updated_image
         self.training_data.save()
         

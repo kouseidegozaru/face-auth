@@ -3,10 +3,9 @@ from django.contrib.auth import get_user_model
 from rest_framework.serializers import ValidationError
 from recognizer.models import TrainingData, TrainingGroup
 from recognizer.serializers.models_serializers import TrainingDataSerializer
-from django.core.files.uploadedfile import SimpleUploadedFile
+from recognizer.tests.tools.image_generator import SimpleUploadedImage
 import os
 from recognizer.tests.tools.clear_test_data import clear_media
-from recognizer.tests.tools.image_generator import get_test_image_as_bytes
 from unittest.mock import patch
 
 
@@ -24,9 +23,7 @@ class TestTrainingDataSerializer(TestCase):
         # ランダムなTrainingDataインスタンスを作成
         self.training_data = TrainingData.objects.create(
             group=self.group,
-            image=SimpleUploadedFile(
-                "test_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg"
-            ),
+            image=SimpleUploadedImage(),
             label='test_label'
         )
 
@@ -40,9 +37,7 @@ class TestTrainingDataSerializer(TestCase):
         # シリアライザーの作成テスト
         serializer = TrainingDataSerializer(data={
             "group": self.group,
-            "image": SimpleUploadedFile(
-                "test_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg"
-            ),
+            "image": SimpleUploadedImage(),
             "label": "test_label"
         })
         self.assertTrue(serializer.is_valid()) # データの検証
@@ -73,9 +68,7 @@ class TestTrainingDataSerializer(TestCase):
     @patch('recognizer.serializers.models_serializers.is_exist_face', return_value=True)
     def test_update_image(self, mock_is_exist_face):
         # シリアライザーの更新テスト
-        image = SimpleUploadedFile(
-            "updated_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg"
-        )
+        image = SimpleUploadedImage(name="updated_image.jpg")
         serializer = TrainingDataSerializer(instance=self.training_data, data={
             "image": image
         }, partial=True)

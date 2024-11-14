@@ -2,12 +2,11 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
-from django.core.files.uploadedfile import SimpleUploadedFile
+from recognizer.tests.tools.image_generator import SimpleUploadedImage
 from allauth.account.models import EmailAddress
 from recognizer.models import TrainingGroup, TrainingData
 import os
 from recognizer.tests.tools.clear_test_data import clear_media
-from recognizer.tests.tools.image_generator import get_test_image_as_bytes
 from unittest.mock import patch
 from recognizer.tests.views.Auther import AuthTestMixin
 
@@ -26,7 +25,7 @@ class TestGroupDataViewSet(APITestCase, AuthTestMixin):
         # テスト用のTrainingGroupの作成
         self.group = TrainingGroup.objects.create(name='test_group', owner=self.user)
         # テスト用の画像
-        self.image = SimpleUploadedFile("test_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg")
+        self.image = SimpleUploadedImage()
 
     def tearDown(self):
         # 作成した画像パスを削除

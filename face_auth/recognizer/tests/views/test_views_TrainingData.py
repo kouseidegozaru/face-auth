@@ -2,13 +2,12 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
-from django.core.files.uploadedfile import SimpleUploadedFile
+from recognizer.tests.tools.image_generator import SimpleUploadedImage
 from allauth.account.models import EmailAddress
 from recognizer.models import TrainingData, TrainingGroup
 import os
 import uuid
 from recognizer.tests.tools.clear_test_data import clear_media
-from recognizer.tests.tools.image_generator import get_test_image_as_bytes
 from unittest.mock import patch
 from recognizer.tests.views.Auther import AuthTestMixin
 
@@ -32,7 +31,7 @@ class TestTrainingDataViewSet(APITestCase, AuthTestMixin):
         self.training_data = TrainingData.objects.create(
             group=self.group,
             label='test_label',
-            image=SimpleUploadedFile("test_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg")
+            image=SimpleUploadedImage()
         )
 
 
@@ -58,7 +57,7 @@ class TestTrainingDataViewSet(APITestCase, AuthTestMixin):
         url = reverse('training-data-detail', args=[self.training_data.pk])
         data = {
             'label': 'test_label2',
-            'image': SimpleUploadedFile("updated_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg")
+            'image': SimpleUploadedImage(name='updated_image.jpg')
         }
         response = self.client.patch(url, data=data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_200_OK)

@@ -2,11 +2,10 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
-from django.core.files.uploadedfile import SimpleUploadedFile
+from recognizer.tests.tools.image_generator import SimpleUploadedImage
 from allauth.account.models import EmailAddress
 from recognizer.models import TrainingGroup, FeatureData
 from recognizer.tests.tools.feature_model_generator import get_random_feature_model
-from recognizer.tests.tools.image_generator import get_test_image_as_bytes
 from recognizer.repository.save_model import feature_model_to_binary
 import numpy as np
 import uuid
@@ -39,9 +38,7 @@ class TestPredictView(APITestCase, AuthTestMixin):
         )
 
         # 推論する画像の作成
-        self.image = SimpleUploadedFile(
-            "test_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg"
-        )
+        self.image = SimpleUploadedImage()
 
     @patch('recognizer.serializers.recognize_serializers.is_exist_face', return_value=True)
     @patch('recognizer.services.recognize.recognize.extract_face_feature', return_value=np.random.rand(10))
