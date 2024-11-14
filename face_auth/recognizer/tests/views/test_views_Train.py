@@ -1,15 +1,17 @@
-from django.urls import reverse
-from rest_framework import status
-from rest_framework.test import APITestCase
-from django.contrib.auth import get_user_model
-from recognizer.tests.tools.image_generator import SimpleUploadedImage
-from allauth.account.models import EmailAddress
-from recognizer.models import TrainingGroup, TrainingData
-import numpy as np
 import uuid
 from unittest.mock import patch
+
+import numpy as np
+from allauth.account.models import EmailAddress
+from django.contrib.auth import get_user_model
+from django.urls import reverse
+from recognizer.models import TrainingData, TrainingGroup
 from recognizer.tests.tools.clear_test_data import ClearTrainingDataMixin
+from recognizer.tests.tools.image_generator import SimpleUploadedImage
 from recognizer.tests.views.Auther import AuthTestMixin
+from rest_framework import status
+from rest_framework.test import APITestCase
+
 
 class TestTrainView(ClearTrainingDataMixin, APITestCase, AuthTestMixin):
 

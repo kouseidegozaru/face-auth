@@ -1,13 +1,14 @@
-from django.test import TestCase
-from recognizer.tests.tools.image_generator import SimpleUploadedImage
-from django.contrib.auth import get_user_model
 from unittest.mock import patch
-from recognizer.models import TrainingGroup, TrainingData
-from recognizer.services.recognize.recognize import train_feature
-from recognizer.services.recognize.feature_models import FeatureModel
-from recognizer.services.recognize.types import LearningDataSet
+
 import numpy as np
+from django.contrib.auth import get_user_model
+from django.test import TestCase
+from recognizer.models import TrainingData, TrainingGroup
+from recognizer.services.recognize.feature_models import FeatureModel
+from recognizer.services.recognize.recognize import train_feature
+from recognizer.services.recognize.types import LearningDataSet
 from recognizer.tests.tools.clear_test_data import ClearTrainingDataMixin
+from recognizer.tests.tools.image_generator import SimpleUploadedImage
 
 
 class TestTrain(ClearTrainingDataMixin, TestCase):

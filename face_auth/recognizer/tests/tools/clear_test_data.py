@@ -1,5 +1,5 @@
-from recognizer.models import TrainingData
 from django.db.models import Model
+from recognizer.models import TrainingData
 
 
 class ClearTestDataMixin:

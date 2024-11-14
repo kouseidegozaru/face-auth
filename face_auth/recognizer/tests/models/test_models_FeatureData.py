@@ -1,11 +1,10 @@
-from django.test import TestCase
 from django.contrib.auth import get_user_model
-
-from recognizer.services.recognize.feature_models import FeatureModel
-from recognizer.models import TrainingGroup, FeatureData
-from recognizer.tests.tools.feature_model_generator import get_random_feature_model
+from django.test import TestCase
+from recognizer.models import FeatureData, TrainingGroup
 from recognizer.repository.load_model import feature_model_from_binary
 from recognizer.repository.save_model import feature_model_to_binary
+from recognizer.services.recognize.feature_models import FeatureModel
+from recognizer.tests.tools.feature_model_generator import get_random_feature_model
 
 
 class TestTrainingGroup(TestCase):

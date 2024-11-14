@@ -1,10 +1,10 @@
-from django.urls import reverse
-from rest_framework import status
-from rest_framework.test import APITestCase
-from django.contrib.auth import get_user_model
 from allauth.account.models import EmailAddress
+from django.contrib.auth import get_user_model
+from django.urls import reverse
 from recognizer.models import TrainingGroup
 from recognizer.tests.views.Auther import AuthTestMixin
+from rest_framework import status
+from rest_framework.test import APITestCase
 
 
 class TestTrainingGroupViewSet(APITestCase, AuthTestMixin):
