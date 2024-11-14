@@ -57,14 +57,14 @@ class TestTrainingDataSerializer(TestCase):
         # シリアライザーの更新テスト
         serializer = TrainingDataSerializer(instance=self.training_data, data={
             "label": "updated_label"
-        })
+        }, partial=True)
         self.assertTrue(serializer.is_valid())
         updated_training_data = serializer.save()
         self.assertEqual(updated_training_data.label, "updated_label")
 
     def test_update_fail_label_required(self):
         # シリアライザーのlabel更新失敗テスト
-        serializer = TrainingDataSerializer(instance=self.training_data, data={})
+        serializer = TrainingDataSerializer(instance=self.training_data, data={}, partial=True)
         self.assertFalse(serializer.is_valid())
         self.assertIn("label", serializer.errors)
 
@@ -76,7 +76,7 @@ class TestTrainingDataSerializer(TestCase):
         )
         serializer = TrainingDataSerializer(instance=self.training_data, data={
             "image": image
-        })
+        }, partial=True)
         self.assertTrue(serializer.is_valid())
         updated_training_data = serializer.save()
         self.assertEqual(os.path.basename(updated_training_data.image.name), "updated_image.jpg")
@@ -84,7 +84,7 @@ class TestTrainingDataSerializer(TestCase):
 
     def test_update_fail_image_required(self):
         # シリアライザーのimage更新失敗テスト
-        serializer = TrainingDataSerializer(instance=self.training_data, data={})
+        serializer = TrainingDataSerializer(instance=self.training_data, data={}, partial=True)
         self.assertFalse(serializer.is_valid())
         self.assertIn("image", serializer.errors)
 
@@ -93,7 +93,7 @@ class TestTrainingDataSerializer(TestCase):
         serializer = TrainingDataSerializer(instance=self.training_data, data={
             "group": self.group,
             "label": "updated_label"
-        })
+        }, partial=True)
         self.assertFalse(serializer.is_valid())
         self.assertIn("group", serializer.errors)
 
@@ -102,6 +102,6 @@ class TestTrainingDataSerializer(TestCase):
         serializer = TrainingDataSerializer(instance=self.training_data, data={
             "group": self.group,
             "label": "updated_label"
-        })
+        }, partial=True)
         self.assertFalse(serializer.is_valid())
         self.assertIn("owner", serializer.errors)
