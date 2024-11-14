@@ -2,8 +2,7 @@ from django.test import TestCase
 from django.contrib.auth import get_user_model
 from recognizer.models import TrainingGroup
 from recognizer.serializers.recognize_serializers import PredictSerializer
-from recognizer.tests.tools.image_generator import get_test_image_as_bytes
-from django.core.files.uploadedfile import SimpleUploadedFile
+from recognizer.tests.tools.image_generator import SimpleUploadedImage
 from unittest.mock import patch
 import uuid
 
@@ -24,7 +23,7 @@ class TestPredictSerializer(TestCase):
         )
 
         # テスト用の画像データを作成
-        self.image = SimpleUploadedFile("test_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg")
+        self.image = SimpleUploadedImage()
 
     @patch('recognizer.serializers.recognize_serializers.is_exist_face', return_value=True)
     def test_validate_success(self, mock_is_exist_face):

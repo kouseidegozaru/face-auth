@@ -2,16 +2,16 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
-from django.core.files.uploadedfile import SimpleUploadedFile
+from recognizer.tests.tools.image_generator import SimpleUploadedImage
 from allauth.account.models import EmailAddress
 from recognizer.models import TrainingGroup, TrainingData
 import numpy as np
 import uuid
 from unittest.mock import patch
-from recognizer.tests.tools.clear_test_data import clear_media
-from recognizer.tests.tools.image_generator import get_test_image_as_bytes
+from recognizer.tests.tools.clear_test_data import ClearTrainingDataMixin
+from recognizer.tests.views.Auther import AuthTestMixin
 
-class TestTrainView(APITestCase):
+class TestTrainView(ClearTrainingDataMixin, APITestCase, AuthTestMixin):
 
     def setUp(self):
         # テストユーザーの作成
@@ -29,35 +29,18 @@ class TestTrainView(APITestCase):
         self.data1 = TrainingData.objects.create(
             label=' test_data1',
             group=self.group,
-            image=SimpleUploadedFile(
-                "test_image1.jpg", get_test_image_as_bytes(), content_type="image/jpeg"
-            )
+            image=SimpleUploadedImage(name="test_image1.jpg")
         )
         self.data2 = TrainingData.objects.create(
             label=' test_data2',
             group=self.group,
-            image=SimpleUploadedFile(
-                "test_image2.jpg", get_test_image_as_bytes(), content_type="image/jpeg"
-            )
+            image=SimpleUploadedImage(name="test_image2.jpg")
         )
 
         # ユーザーのメールアドレスを認証済みに設定
         EmailAddress.objects.create(user=self.user, email=self.user.email, verified=True, primary=True)
-        # 認証トークンの取得
-        response = self.client.post(
-            reverse('custom_login'),
-            {'email': 'test_email@example.com', 'password': 'test_password'},
-            format='json'
-        )
-        self.token = response.data.get("key")
-        if not self.token:
-            raise ValueError('Token retrieval failed')
-        # 認証ヘッダーの設定
-        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token}')
-
-    def tearDown(self):
-        # 削除対象のファイルを削除する
-        clear_media()
+        # 認証トークンの設定
+        self.set_auth_token(self.user, 'test_password')
 
     @patch('recognizer.services.recognize.recognize.detect_face', side_effect=lambda image: image)
     @patch('recognizer.services.recognize.recognize.extract_face_feature', return_value=np.random.rand(10))

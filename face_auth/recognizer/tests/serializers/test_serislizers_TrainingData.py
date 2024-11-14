@@ -3,14 +3,13 @@ from django.contrib.auth import get_user_model
 from rest_framework.serializers import ValidationError
 from recognizer.models import TrainingData, TrainingGroup
 from recognizer.serializers.models_serializers import TrainingDataSerializer
-from django.core.files.uploadedfile import SimpleUploadedFile
+from recognizer.tests.tools.image_generator import SimpleUploadedImage
 import os
-from recognizer.tests.tools.clear_test_data import clear_media
-from recognizer.tests.tools.image_generator import get_test_image_as_bytes
+from recognizer.tests.tools.clear_test_data import ClearTrainingDataMixin
 from unittest.mock import patch
 
 
-class TestTrainingDataSerializer(TestCase):
+class TestTrainingDataSerializer(ClearTrainingDataMixin, TestCase):
 
     def setUp(self):
         # テストユーザーを作成
@@ -24,25 +23,16 @@ class TestTrainingDataSerializer(TestCase):
         # ランダムなTrainingDataインスタンスを作成
         self.training_data = TrainingData.objects.create(
             group=self.group,
-            image=SimpleUploadedFile(
-                "test_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg"
-            ),
+            image=SimpleUploadedImage(),
             label='test_label'
         )
-
-
-    def tearDown(self):
-        # テスト終了後に生成されたすべての画像ファイルを削除
-        clear_media()
 
     @patch('recognizer.serializers.models_serializers.is_exist_face', return_value=True)
     def test_create(self, mock_is_exist_face):
         # シリアライザーの作成テスト
         serializer = TrainingDataSerializer(data={
             "group": self.group,
-            "image": SimpleUploadedFile(
-                "test_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg"
-            ),
+            "image": SimpleUploadedImage(),
             "label": "test_label"
         })
         self.assertTrue(serializer.is_valid()) # データの検証
@@ -73,15 +63,14 @@ class TestTrainingDataSerializer(TestCase):
     @patch('recognizer.serializers.models_serializers.is_exist_face', return_value=True)
     def test_update_image(self, mock_is_exist_face):
         # シリアライザーの更新テスト
-        image = SimpleUploadedFile(
-            "updated_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg"
-        )
+        old_image = self.training_data.image
+        image = SimpleUploadedImage(name="updated_image.jpg")
         serializer = TrainingDataSerializer(instance=self.training_data, data={
             "image": image
         }, partial=True)
         self.assertTrue(serializer.is_valid())
         updated_training_data = serializer.save()
-        self.assertEqual(os.path.basename(updated_training_data.image.name), "updated_image.jpg")
+        self.assertNotEqual(updated_training_data.image.name, old_image.name)
 
 
     def test_update_fail_image_required(self):

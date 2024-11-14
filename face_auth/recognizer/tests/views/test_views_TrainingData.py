@@ -2,17 +2,17 @@ from django.urls import reverse
 from rest_framework import status
 from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
-from django.core.files.uploadedfile import SimpleUploadedFile
+from recognizer.tests.tools.image_generator import SimpleUploadedImage
 from allauth.account.models import EmailAddress
 from recognizer.models import TrainingData, TrainingGroup
 import os
 import uuid
-from recognizer.tests.tools.clear_test_data import clear_media
-from recognizer.tests.tools.image_generator import get_test_image_as_bytes
+from recognizer.tests.tools.clear_test_data import ClearTrainingDataMixin
 from unittest.mock import patch
+from recognizer.tests.views.Auther import AuthTestMixin
 
 
-class TestTrainingDataViewSet(APITestCase):
+class TestTrainingDataViewSet(ClearTrainingDataMixin, APITestCase, AuthTestMixin):
     def setUp(self):
         # テストユーザーの作成
         self.user = get_user_model().objects.create_user(
@@ -22,17 +22,8 @@ class TestTrainingDataViewSet(APITestCase):
         )        
         # ユーザーのメールアドレスを認証済みに設定
         EmailAddress.objects.create(user=self.user, email=self.user.email, verified=True, primary=True)
-        # 認証トークンの取得
-        response = self.client.post(
-            reverse('custom_login'),
-            {'email': 'test_email@example.com', 'password': 'test_password'},
-            format='json'
-        )
-        self.token = response.data.get("key")
-        if not self.token:
-            raise ValueError('Token retrieval failed')
-        # 認証ヘッダーの設定
-        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token}')
+        # 認証トークンの設定
+        self.set_auth_token(self.user, 'test_password')
 
         # テスト用のTrainingGroupの作成
         self.group = TrainingGroup.objects.create(name='test_group', owner=self.user)
@@ -40,13 +31,8 @@ class TestTrainingDataViewSet(APITestCase):
         self.training_data = TrainingData.objects.create(
             group=self.group,
             label='test_label',
-            image=SimpleUploadedFile("test_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg")
+            image=SimpleUploadedImage()
         )
-
-
-    def tearDown(self):
-        # 作成した画像ファイルの削除
-        clear_media()
 
     def test_list_training_data(self):
         # TrainingDataの一覧取得テスト
@@ -66,7 +52,7 @@ class TestTrainingDataViewSet(APITestCase):
         url = reverse('training-data-detail', args=[self.training_data.pk])
         data = {
             'label': 'test_label2',
-            'image': SimpleUploadedFile("updated_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg")
+            'image': SimpleUploadedImage(name='updated_image.jpg')
         }
         response = self.client.patch(url, data=data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_200_OK)

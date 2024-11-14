@@ -1,5 +1,5 @@
 from django.test import TestCase
-from django.core.files.uploadedfile import SimpleUploadedFile
+from recognizer.tests.tools.image_generator import SimpleUploadedImage
 from django.contrib.auth import get_user_model
 from unittest.mock import patch
 from recognizer.models import TrainingGroup, TrainingData
@@ -7,11 +7,10 @@ from recognizer.services.recognize.recognize import train_feature
 from recognizer.services.recognize.feature_models import FeatureModel
 from recognizer.services.recognize.types import LearningDataSet
 import numpy as np
-from recognizer.tests.tools.clear_test_data import clear_media
-from recognizer.tests.tools.image_generator import get_test_image_as_bytes
+from recognizer.tests.tools.clear_test_data import ClearTrainingDataMixin
 
 
-class TestTrain(TestCase):
+class TestTrain(ClearTrainingDataMixin, TestCase):
     def setUp(self):
         self.user = get_user_model().objects.create_user(
             email='test_email@example.com', 
@@ -24,13 +23,10 @@ class TestTrain(TestCase):
         self.dataset = LearningDataSet()
         for i in range(10):
             # 画像の作成
-            image = SimpleUploadedFile(f"test{i}.jpg", get_test_image_as_bytes(), content_type="image/jpeg")
+            image = SimpleUploadedImage(name=f"test{i}.jpg")
             training_data = TrainingData.objects.create(group=self.group, image=image, label=f"test{i}")
             # データセットに追加
             self.dataset.add(f"test{i}", training_data.image.path)
-
-    def tearDown(self):
-        clear_media()
 
     @patch('recognizer.services.recognize.recognize.detect_face', side_effect=lambda image: image) # 画像をそのまま返す
     @patch('recognizer.services.recognize.recognize.extract_face_feature', return_value=np.random.rand(10))
