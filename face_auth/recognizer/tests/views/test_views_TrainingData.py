@@ -8,6 +8,8 @@ from recognizer.models import TrainingData, TrainingGroup
 import os
 import uuid
 from recognizer.tests.tools.clear_test_data import clear_media
+from recognizer.tests.tools.image_generator import get_test_image_as_bytes
+from unittest.mock import patch
 
 
 class TestTrainingDataViewSet(APITestCase):
@@ -38,7 +40,7 @@ class TestTrainingDataViewSet(APITestCase):
         self.training_data = TrainingData.objects.create(
             group=self.group,
             label='test_label',
-            image=SimpleUploadedFile("test_image.jpg", b"random_image_data", content_type="image/jpeg")
+            image=SimpleUploadedFile("test_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg")
         )
 
 
@@ -58,12 +60,13 @@ class TestTrainingDataViewSet(APITestCase):
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
-    def test_update_training_data(self):
+    @patch('recognizer.serializers.models_serializers.is_exist_face', return_value=True)
+    def test_update_training_data(self, mock_is_exist_face):
         # TrainingDataの更新テスト
         url = reverse('training-data-detail', args=[self.training_data.pk])
         data = {
             'label': 'test_label2',
-            'image': SimpleUploadedFile("updated_image.jpg", b"updated_image_data", content_type="image/jpeg")
+            'image': SimpleUploadedFile("updated_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg")
         }
         response = self.client.patch(url, data=data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
