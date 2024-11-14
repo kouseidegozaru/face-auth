@@ -4,6 +4,7 @@ from django.dispatch import receiver
 import uuid
 from accounts.models import User
 import os
+import uuid
 
 class TrainingGroup(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -15,8 +16,9 @@ class TrainingGroup(models.Model):
 
 # 画像ファイルの保存先
 def get_upload_to(self, filename):
-    return f'recognizer/{self.group.id}/{filename}'
-    
+    ext = os.path.splitext(filename)[1] # 拡張子を取得
+    return f'training-data/{self.group.id}-{uuid.uuid4()}{ext}'
+
 class TrainingData(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     group = models.ForeignKey(TrainingGroup, on_delete=models.CASCADE)
