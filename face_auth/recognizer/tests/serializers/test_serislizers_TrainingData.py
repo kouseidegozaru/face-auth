@@ -45,7 +45,7 @@ class TestTrainingDataSerializer(TestCase):
             "label": "test_label"
         })
         self.assertTrue(serializer.is_valid()) # データの検証
-        training_data = serializer.save(owner=self.user)
+        training_data = serializer.save(group=self.group)
         # テスト用のTrainingDataインスタンスと一致することを確認
         self.assertEqual(training_data.group, self.group)
         self.assertEqual(os.path.basename(training_data.image.name), "test_image.jpg")
