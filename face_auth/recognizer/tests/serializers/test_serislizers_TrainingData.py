@@ -6,6 +6,7 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 import os
 from recognizer.tests.tools.clear_test_data import clear_media
 from recognizer.tests.tools.image_generator import get_test_image_as_bytes
+from unittest.mock import patch
 
 
 class TestTrainingDataSerializer(TestCase):
@@ -33,7 +34,8 @@ class TestTrainingDataSerializer(TestCase):
         # テスト終了後に生成されたすべての画像ファイルを削除
         clear_media()
 
-    def test_create(self):
+    @patch('recognizer.serializers.models_serializers.is_exist_face', return_value=True)
+    def test_create(self, mock_is_exist_face):
         # シリアライザーの作成テスト
         serializer = TrainingDataSerializer(data={
             "group": self.group,
@@ -66,7 +68,8 @@ class TestTrainingDataSerializer(TestCase):
         self.assertFalse(serializer.is_valid())
         self.assertIn("label", serializer.errors)
 
-    def test_update_image(self):
+    @patch('recognizer.serializers.models_serializers.is_exist_face', return_value=True)
+    def test_update_image(self, mock_is_exist_face):
         # シリアライザーの更新テスト
         image = SimpleUploadedFile(
             "updated_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg"
