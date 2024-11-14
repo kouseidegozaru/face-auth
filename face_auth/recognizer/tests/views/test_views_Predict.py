@@ -8,7 +8,7 @@ from recognizer.models import TrainingGroup, FeatureData
 from recognizer.tests.tools.feature_model_generator import get_random_feature_model
 from recognizer.tests.tools.image_generator import get_test_image_as_bytes
 from recognizer.repository.save_model import feature_model_to_binary
-import os
+import numpy as np
 import uuid
 from unittest.mock import patch
 
@@ -53,7 +53,8 @@ class TestPredictView(APITestCase):
         )
 
     @patch('recognizer.serializers.recognize_serializers.is_exist_face', return_value=True)
-    def test_post(self, mock_is_exist_face):
+    @patch('recognizer.services.recognize.recognize.extract_face_feature', return_value=np.random.rand(10))
+    def test_post(self, mock_extract_face_feature, mock_is_exist_face):
         # POSTリクエストのテスト
         url = reverse('predict', args=[self.group.pk])
         response = self.client.post(url, {'image': self.image})
