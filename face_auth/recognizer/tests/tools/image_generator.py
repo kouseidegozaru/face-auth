@@ -1,6 +1,8 @@
-import PIL.Image as Image
 from io import BytesIO
+
+import PIL.Image as Image
 from django.core.files.uploadedfile import SimpleUploadedFile
+
 
 def test_image() -> Image:
     return Image.new("RGB", (100, 100), color=(0, 0, 0))

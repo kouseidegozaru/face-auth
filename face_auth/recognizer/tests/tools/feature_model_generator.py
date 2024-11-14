@@ -1,6 +1,7 @@
-from ...services.recognize.feature_models import FeatureModelStorage, FeatureModel
-from sklearn.neighbors import NearestNeighbors
 import numpy as np
+from recognizer.services.recognize.feature_models import FeatureModel
+from sklearn.neighbors import NearestNeighbors
+
 
 def get_random_feature_model() -> FeatureModel:
     """

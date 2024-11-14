@@ -1,16 +1,17 @@
-from django.urls import reverse
-from rest_framework import status
-from rest_framework.test import APITestCase
-from django.contrib.auth import get_user_model
-from recognizer.tests.tools.image_generator import SimpleUploadedImage
-from allauth.account.models import EmailAddress
-from recognizer.models import TrainingGroup, FeatureData
-from recognizer.tests.tools.feature_model_generator import get_random_feature_model
-from recognizer.repository.save_model import feature_model_to_binary
-import numpy as np
 import uuid
 from unittest.mock import patch
+
+import numpy as np
+from allauth.account.models import EmailAddress
+from django.contrib.auth import get_user_model
+from django.urls import reverse
+from recognizer.models import FeatureData, TrainingGroup
+from recognizer.repository.save_model import feature_model_to_binary
+from recognizer.tests.tools.feature_model_generator import get_random_feature_model
+from recognizer.tests.tools.image_generator import SimpleUploadedImage
 from recognizer.tests.views.Auther import AuthTestMixin
+from rest_framework import status
+from rest_framework.test import APITestCase
 
 
 class TestPredictView(APITestCase, AuthTestMixin):

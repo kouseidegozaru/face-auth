@@ -1,9 +1,11 @@
+from unittest.mock import patch
+
+import numpy as np
 from django.test import TestCase
-from recognizer.tests.tools.image_generator import test_image
 from recognizer.services.recognize.recognize import predict_feature
 from recognizer.tests.tools.feature_model_generator import get_random_feature_model
-from unittest.mock import patch
-import numpy as np
+from recognizer.tests.tools.image_generator import test_image
+
 
 class TestPredict(TestCase):
     def setUp(self):

@@ -1,10 +1,12 @@
-from django.test import TestCase
+import uuid
+from unittest.mock import patch
+
 from django.contrib.auth import get_user_model
+from django.test import TestCase
 from recognizer.models import TrainingGroup
 from recognizer.serializers.recognize_serializers import PredictSerializer
 from recognizer.tests.tools.image_generator import SimpleUploadedImage
-from unittest.mock import patch
-import uuid
+
 
 class TestPredictSerializer(TestCase):
 

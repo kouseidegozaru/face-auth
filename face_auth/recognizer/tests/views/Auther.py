@@ -1,5 +1,6 @@
 from django.urls import reverse
 
+
 class AuthTestMixin(object):
     def set_auth_token(self, user, password=None):
         # 認証トークンの取得

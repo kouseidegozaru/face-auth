@@ -1,12 +1,12 @@
-from django.test import TestCase
+from unittest.mock import patch
+
 from django.contrib.auth import get_user_model
-from rest_framework.serializers import ValidationError
+from django.test import TestCase
 from recognizer.models import TrainingData, TrainingGroup
 from recognizer.serializers.models_serializers import TrainingDataSerializer
-from recognizer.tests.tools.image_generator import SimpleUploadedImage
-import os
 from recognizer.tests.tools.clear_test_data import ClearTrainingDataMixin
-from unittest.mock import patch
+from recognizer.tests.tools.image_generator import SimpleUploadedImage
+from rest_framework.serializers import ValidationError
 
 
 class TestTrainingDataSerializer(ClearTrainingDataMixin, TestCase):

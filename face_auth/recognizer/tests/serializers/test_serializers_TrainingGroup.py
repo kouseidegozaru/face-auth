@@ -1,7 +1,8 @@
-from django.test import TestCase
 from django.contrib.auth import get_user_model
+from django.test import TestCase
 from recognizer.models import TrainingGroup
 from recognizer.serializers.models_serializers import TrainingGroupSerializer
+
 
 class TestTrainingGroupSerializer(TestCase):
 
