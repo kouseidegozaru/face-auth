@@ -7,6 +7,7 @@ from allauth.account.models import EmailAddress
 from recognizer.models import TrainingGroup, TrainingData
 import os
 from recognizer.tests.tools.clear_test_data import clear_media
+from recognizer.tests.tools.image_generator import get_test_image_as_bytes
 
 class TestGroupDataViewSet(APITestCase):
     def setUp(self):
@@ -33,7 +34,7 @@ class TestGroupDataViewSet(APITestCase):
         # テスト用のTrainingGroupの作成
         self.group = TrainingGroup.objects.create(name='test_group', owner=self.user)
         # テスト用の画像
-        self.image = SimpleUploadedFile("test_image.jpg", b"random_image_data", content_type="image/jpeg")
+        self.image = SimpleUploadedFile("test_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg")
 
     def tearDown(self):
         # 作成した画像パスを削除
