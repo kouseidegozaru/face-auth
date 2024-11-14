@@ -8,6 +8,7 @@ from recognizer.models import TrainingData, TrainingGroup
 import os
 import uuid
 from recognizer.tests.tools.clear_test_data import clear_media
+from recognizer.tests.tools.image_generator import get_test_image_as_bytes
 
 
 class TestTrainingDataViewSet(APITestCase):
@@ -38,7 +39,7 @@ class TestTrainingDataViewSet(APITestCase):
         self.training_data = TrainingData.objects.create(
             group=self.group,
             label='test_label',
-            image=SimpleUploadedFile("test_image.jpg", b"random_image_data", content_type="image/jpeg")
+            image=SimpleUploadedFile("test_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg")
         )
 
 
@@ -63,7 +64,7 @@ class TestTrainingDataViewSet(APITestCase):
         url = reverse('training-data-detail', args=[self.training_data.pk])
         data = {
             'label': 'test_label2',
-            'image': SimpleUploadedFile("updated_image.jpg", b"updated_image_data", content_type="image/jpeg")
+            'image': SimpleUploadedFile("updated_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg")
         }
         response = self.client.patch(url, data=data, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
