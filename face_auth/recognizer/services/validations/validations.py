@@ -1,5 +1,6 @@
-from ..recognize.recognize import detect_face
 import numpy as np
+from recognizer.services.recognize.recognize import detect_face
+
 
 def is_exist_face(image : np.ndarray) -> bool:
     """

@@ -1,10 +1,11 @@
+import os
+import uuid
+
+from accounts.models import User
 from django.db import models
 from django.db.models.signals import post_delete, pre_save
 from django.dispatch import receiver
-import uuid
-from accounts.models import User
-import os
-import uuid
+
 
 class TrainingGroup(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)

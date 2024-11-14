@@ -2,9 +2,9 @@ import numpy as np
 from sklearn.neighbors import NearestNeighbors
 import face_recognition
 
-from .types import LearningDataSet
-from ..tools.image_operations import open_image
-from .feature_models import FeatureModel
+from recognizer.services.recognize.types import LearningDataSet
+from recognizer.services.tools.image_operations import open_image
+from recognizer.services.recognize.feature_models import FeatureModel
 
 
 def train_feature(data_set: LearningDataSet) -> FeatureModel:

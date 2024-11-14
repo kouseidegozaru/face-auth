@@ -1,6 +1,8 @@
 from django.urls import path
-from .views.models_views import TrainingGroupViewSet, TrainingDataViewSet, GroupDataViewSet
-from .views.recognize_views import TrainView, PredictView
+from recognizer.views.models_views import (GroupDataViewSet,
+                                           TrainingDataViewSet,
+                                           TrainingGroupViewSet)
+from recognizer.views.recognize_views import PredictView, TrainView
 
 training_group_list = TrainingGroupViewSet.as_view({
     'get': 'list',      # GET: /training-groups/ - TrainingGroup一覧

@@ -1,5 +1,5 @@
-from ..models import TrainingGroup, FeatureData
-from ..services.recognize.feature_models import FeatureModel, FeatureModelStorage
+from recognizer.models import TrainingGroup, FeatureData
+from recognizer.services.recognize.feature_models import FeatureModel, FeatureModelStorage
 
 """
 特徴モデルの読み込み
