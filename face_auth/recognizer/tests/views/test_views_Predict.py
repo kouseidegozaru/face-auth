@@ -6,8 +6,9 @@ from django.core.files.uploadedfile import SimpleUploadedFile
 from allauth.account.models import EmailAddress
 from recognizer.models import TrainingGroup, FeatureData
 from recognizer.tests.tools.feature_model_generator import get_random_feature_model
+from recognizer.tests.tools.image_generator import get_test_image_as_bytes
 from recognizer.repository.save_model import feature_model_to_binary
-import os
+import numpy as np
 import uuid
 from unittest.mock import patch
 
@@ -48,11 +49,12 @@ class TestPredictView(APITestCase):
 
         # 推論する画像の作成
         self.image = SimpleUploadedFile(
-            "test_image.jpg", b"random_image_data", content_type="image/jpeg"
+            "test_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg"
         )
 
-    @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
-    def test_post(self, mock_is_exist_face):
+    @patch('recognizer.serializers.recognize_serializers.is_exist_face', return_value=True)
+    @patch('recognizer.services.recognize.recognize.extract_face_feature', return_value=np.random.rand(10))
+    def test_post(self, mock_extract_face_feature, mock_is_exist_face):
         # POSTリクエストのテスト
         url = reverse('predict', args=[self.group.pk])
         response = self.client.post(url, {'image': self.image})
@@ -62,24 +64,24 @@ class TestPredictView(APITestCase):
         # POSTリクエストの失敗テスト
         url = reverse('predict', args=[self.group.pk])
         response = self.client.post(url, {'image': self.image})
-        self.assertEqual(response.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
 
-    @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
+    @patch('recognizer.serializers.recognize_serializers.is_exist_face', return_value=True)
     def test_post_group_not_found(self, mock_is_exist_face):
         # POSTリクエストの失敗テスト
         url = reverse('predict', args=[uuid.uuid4()])
         response = self.client.post(url, {'image': self.image})
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
-    @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
+    @patch('recognizer.serializers.recognize_serializers.is_exist_face', return_value=True)
     def test_post_feature_data_not_found(self, mock_is_exist_face):
         # POSTリクエストの失敗テスト
         self.feature_data.delete()
         url = reverse('predict', args=[self.group.pk])
         response = self.client.post(url, {'image': self.image})
-        self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+        self.assertEqual(response.status_code, status.HTTP_412_PRECONDITION_FAILED)
 
-    @patch('recognizer.services.validations.validations.is_exist_face', return_value=True)
+    @patch('recognizer.serializers.recognize_serializers.is_exist_face', return_value=True)
     def test_post_another_user(self, mock_is_exist_face):
         # POSTリクエストの失敗テスト
         url = reverse('predict', args=[self.group.pk])

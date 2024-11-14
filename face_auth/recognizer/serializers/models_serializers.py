@@ -25,7 +25,7 @@ class TrainingDataSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         # imageに顔が見つからない場合はエラー
-        image = open_image(validated_data.pop('image'))
+        image = open_image(validated_data.get('image'))
         if not is_exist_face(image):
             raise serializers.ValidationError("detail: cannot detect face in image")
         return super().create(validated_data)

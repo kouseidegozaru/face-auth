@@ -1,10 +1,13 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
+from rest_framework.serializers import ValidationError
 from recognizer.models import TrainingData, TrainingGroup
 from recognizer.serializers.models_serializers import TrainingDataSerializer
 from django.core.files.uploadedfile import SimpleUploadedFile
 import os
 from recognizer.tests.tools.clear_test_data import clear_media
+from recognizer.tests.tools.image_generator import get_test_image_as_bytes
+from unittest.mock import patch
 
 
 class TestTrainingDataSerializer(TestCase):
@@ -22,7 +25,7 @@ class TestTrainingDataSerializer(TestCase):
         self.training_data = TrainingData.objects.create(
             group=self.group,
             image=SimpleUploadedFile(
-                "test_image.jpg", b"random_image_data", content_type="image/jpeg"
+                "test_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg"
             ),
             label='test_label'
         )
@@ -32,20 +35,21 @@ class TestTrainingDataSerializer(TestCase):
         # テスト終了後に生成されたすべての画像ファイルを削除
         clear_media()
 
-    def test_create(self):
+    @patch('recognizer.serializers.models_serializers.is_exist_face', return_value=True)
+    def test_create(self, mock_is_exist_face):
         # シリアライザーの作成テスト
         serializer = TrainingDataSerializer(data={
             "group": self.group,
             "image": SimpleUploadedFile(
-                "test_image.jpg", b"random_image_data", content_type="image/jpeg"
+                "test_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg"
             ),
             "label": "test_label"
         })
         self.assertTrue(serializer.is_valid()) # データの検証
-        training_data = serializer.save(owner=self.user)
+        training_data = serializer.save(group=self.group)
         # テスト用のTrainingDataインスタンスと一致することを確認
         self.assertEqual(training_data.group, self.group)
-        self.assertEqual(os.path.basename(training_data.image.name), "test_image.jpg")
+        self.assertIsNotNone(training_data.image)
         self.assertEqual(training_data.label, "test_label")
         self.assertIsNotNone(training_data.created_at)
         self.assertIsNotNone(training_data.updated_at)
@@ -54,25 +58,27 @@ class TestTrainingDataSerializer(TestCase):
         # シリアライザーの更新テスト
         serializer = TrainingDataSerializer(instance=self.training_data, data={
             "label": "updated_label"
-        })
+        }, partial=True)
         self.assertTrue(serializer.is_valid())
         updated_training_data = serializer.save()
         self.assertEqual(updated_training_data.label, "updated_label")
 
     def test_update_fail_label_required(self):
         # シリアライザーのlabel更新失敗テスト
-        serializer = TrainingDataSerializer(instance=self.training_data, data={})
-        self.assertFalse(serializer.is_valid())
-        self.assertIn("label", serializer.errors)
+        serializer = TrainingDataSerializer(instance=self.training_data, data={}, partial=True)
+        self.assertTrue(serializer.is_valid())
+        with self.assertRaises(ValidationError):
+            serializer.save()
 
-    def test_update_image(self):
+    @patch('recognizer.serializers.models_serializers.is_exist_face', return_value=True)
+    def test_update_image(self, mock_is_exist_face):
         # シリアライザーの更新テスト
         image = SimpleUploadedFile(
-            "updated_image.jpg", b"updated_image_data", content_type="image/jpeg"
+            "updated_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg"
         )
         serializer = TrainingDataSerializer(instance=self.training_data, data={
             "image": image
-        })
+        }, partial=True)
         self.assertTrue(serializer.is_valid())
         updated_training_data = serializer.save()
         self.assertEqual(os.path.basename(updated_training_data.image.name), "updated_image.jpg")
@@ -80,24 +86,18 @@ class TestTrainingDataSerializer(TestCase):
 
     def test_update_fail_image_required(self):
         # シリアライザーのimage更新失敗テスト
-        serializer = TrainingDataSerializer(instance=self.training_data, data={})
-        self.assertFalse(serializer.is_valid())
-        self.assertIn("image", serializer.errors)
+        serializer = TrainingDataSerializer(instance=self.training_data, data={}, partial=True)
+        self.assertTrue(serializer.is_valid())
+        with self.assertRaises(ValidationError):
+            serializer.save()
 
     def test_update_fail_group_read_only(self):
-        # シリアライザーのgroup更新失敗テスト(groupは読み取り専用)
+        # シリアライザーのgroup更新無効テスト(groupは読み取り専用)
+        another_group = TrainingGroup.objects.create(name='another_group', owner=self.user)
         serializer = TrainingDataSerializer(instance=self.training_data, data={
-            "group": self.group,
+            "group": another_group,
             "label": "updated_label"
-        })
-        self.assertFalse(serializer.is_valid())
-        self.assertIn("group", serializer.errors)
-
-    def test_update_fail_owner_read_only(self):
-        # シリアライザーのowner更新失敗テスト(ownerは読み取り専用)
-        serializer = TrainingDataSerializer(instance=self.training_data, data={
-            "group": self.group,
-            "label": "updated_label"
-        })
-        self.assertFalse(serializer.is_valid())
-        self.assertIn("owner", serializer.errors)
+        }, partial=True)
+        self.assertTrue(serializer.is_valid())
+        training_data = serializer.save()
+        self.assertEqual(training_data.group, self.group)

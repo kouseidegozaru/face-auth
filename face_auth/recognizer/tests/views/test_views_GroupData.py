@@ -7,6 +7,8 @@ from allauth.account.models import EmailAddress
 from recognizer.models import TrainingGroup, TrainingData
 import os
 from recognizer.tests.tools.clear_test_data import clear_media
+from recognizer.tests.tools.image_generator import get_test_image_as_bytes
+from unittest.mock import patch
 
 class TestGroupDataViewSet(APITestCase):
     def setUp(self):
@@ -33,13 +35,14 @@ class TestGroupDataViewSet(APITestCase):
         # テスト用のTrainingGroupの作成
         self.group = TrainingGroup.objects.create(name='test_group', owner=self.user)
         # テスト用の画像
-        self.image = SimpleUploadedFile("test_image.jpg", b"random_image_data", content_type="image/jpeg")
+        self.image = SimpleUploadedFile("test_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg")
 
     def tearDown(self):
         # 作成した画像パスを削除
         clear_media()
 
-    def test_create_group_data(self):
+    @patch('recognizer.serializers.models_serializers.is_exist_face', return_value=True)
+    def test_create_group_data(self, mock_is_exist_face):
         # テスト用のTrainingDataの作成
         url = reverse('group-data', args=[self.group.id])
         data = {'label': 'test_label', 'image': self.image}
