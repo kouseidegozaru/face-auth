@@ -8,6 +8,7 @@ from recognizer.models import TrainingGroup, TrainingData
 import os
 from recognizer.tests.tools.clear_test_data import clear_media
 from recognizer.tests.tools.image_generator import get_test_image_as_bytes
+from unittest.mock import patch
 
 class TestGroupDataViewSet(APITestCase):
     def setUp(self):
@@ -40,7 +41,8 @@ class TestGroupDataViewSet(APITestCase):
         # 作成した画像パスを削除
         clear_media()
 
-    def test_create_group_data(self):
+    @patch('recognizer.serializers.models_serializers.is_exist_face', return_value=True)
+    def test_create_group_data(self, mock_is_exist_face):
         # テスト用のTrainingDataの作成
         url = reverse('group-data', args=[self.group.id])
         data = {'label': 'test_label', 'image': self.image}
