@@ -92,14 +92,15 @@ class TestTrainingDataSerializer(TestCase):
             serializer.save()
 
     def test_update_fail_group_read_only(self):
-        # シリアライザーのgroup更新失敗テスト(groupは読み取り専用)
+        # シリアライザーのgroup更新無効テスト(groupは読み取り専用)
+        another_group = TrainingGroup.objects.create(name='another_group', owner=self.user)
         serializer = TrainingDataSerializer(instance=self.training_data, data={
-            "group": self.group,
+            "group": another_group,
             "label": "updated_label"
         }, partial=True)
         self.assertTrue(serializer.is_valid())
-        with self.assertRaises(ValidationError):
-            serializer.save()
+        training_data = serializer.save()
+        self.assertEqual(training_data.group, self.group)
 
     def test_update_fail_owner_read_only(self):
         # シリアライザーのowner更新失敗テスト(ownerは読み取り専用)
