@@ -1,9 +1,9 @@
-from django.test import TestCase
 from django.contrib.auth import get_user_model
+from django.test import TestCase
 from recognizer.models import TrainingData, TrainingGroup
-from recognizer.tests.tools.image_generator import SimpleUploadedImage
-import os
 from recognizer.tests.tools.clear_test_data import ClearTrainingDataMixin
+from recognizer.tests.tools.image_generator import SimpleUploadedImage
+
 
 class TestTrainingData(ClearTrainingDataMixin,TestCase):
     def setUp(self):
