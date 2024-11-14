@@ -1,6 +1,7 @@
 from ..models import TrainingData, TrainingGroup
 from ..services.recognize.types import LearningDataSet
 
+
 def create_training_data_set(training_group: TrainingGroup) -> LearningDataSet:
     """
     TrainingDataから

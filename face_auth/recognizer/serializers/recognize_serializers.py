@@ -1,8 +1,8 @@
+from recognizer.models import TrainingGroup
+from recognizer.services.tools.image_operations import open_image
+from recognizer.services.validations.validations import is_exist_face
 from rest_framework import serializers
-from rest_framework.exceptions import APIException
-from ..models import TrainingGroup, TrainingData, FeatureData
-from ..services.validations.validations import is_exist_face
-from ..services.tools.image_operations import open_image
+
 
 def get_object_or_exception(model, pk):
     try:

@@ -1,11 +1,11 @@
-from rest_framework import viewsets, status
-from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
-from recognizer.views.permissions import IsGroupOwnerOnly, IsGroupDataOwnerOnly
-from rest_framework.decorators import action
-from ..models import TrainingGroup, TrainingData
-from ..serializers.models_serializers import TrainingGroupSerializer, TrainingDataSerializer
 from django.shortcuts import get_object_or_404
+from recognizer.models import TrainingData, TrainingGroup
+from recognizer.serializers.models_serializers import TrainingDataSerializer, TrainingGroupSerializer
+from recognizer.views.permissions import IsGroupDataOwnerOnly, IsGroupOwnerOnly
+from rest_framework import status, viewsets
+from rest_framework.decorators import action
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
 
 class TrainingGroupViewSet(viewsets.ViewSet):

@@ -1,6 +1,8 @@
-from sklearn.neighbors import NearestNeighbors
-import numpy as np
 import pickle
+
+import numpy as np
+from sklearn.neighbors import NearestNeighbors
+
 
 class FeatureModel:
     """学習後の特徴モデルを保持するクラス"""

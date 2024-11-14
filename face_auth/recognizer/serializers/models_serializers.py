@@ -1,7 +1,7 @@
+from recognizer.models import TrainingData, TrainingGroup
+from recognizer.services.tools.image_operations import open_image
+from recognizer.services.validations.validations import is_exist_face
 from rest_framework import serializers
-from ..models import TrainingGroup, TrainingData
-from ..services.validations.validations import is_exist_face
-from ..services.tools.image_operations import open_image
 
 
 class TrainingGroupSerializer(serializers.ModelSerializer):

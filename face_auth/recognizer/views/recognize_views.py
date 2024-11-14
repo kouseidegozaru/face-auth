@@ -1,17 +1,17 @@
 from django.shortcuts import get_object_or_404
-from rest_framework.views import APIView
-from rest_framework.response import Response
+from recognizer.models import FeatureData, TrainingData, TrainingGroup
+from recognizer.repository.datasets import create_training_data_set
+from recognizer.repository.load_model import load_feature_model
+from recognizer.repository.save_model import save_feature_model
+from recognizer.serializers.recognize_serializers import PredictSerializer, TrainSerializer
+from recognizer.services.recognize.recognize import predict_feature, train_feature
+from recognizer.services.tools.image_operations import open_image
+from recognizer.views.permissions import IsGroupOwnerOnly
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
-from recognizer.views.permissions import IsGroupOwnerOnly
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
-from ..models import TrainingGroup, TrainingData, FeatureData
-from ..repository.save_model import save_feature_model
-from ..repository.load_model import load_feature_model
-from ..repository.datasets import create_training_data_set
-from ..serializers.recognize_serializers import TrainSerializer, PredictSerializer
-from ..services.tools.image_operations import open_image
-from ..services.recognize.recognize import train_feature, predict_feature
 
 class TrainView(APIView):
     # 認証済みのユーザーのみアクセス可能

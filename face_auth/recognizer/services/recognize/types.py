@@ -1,5 +1,6 @@
 from typing import Generator
 
+
 # 学習に必要なデータのレコードの型
 class LearningDataRecordType():
     def __init__(self, label: str, image_path: str):

@@ -1,6 +1,7 @@
+from recognizer.models import TrainingData, TrainingGroup
 from rest_framework import permissions
-from recognizer.models import TrainingGroup, TrainingData
 from rest_framework.exceptions import NotFound
+
 
 class IsGroupOwnerOnly(permissions.BasePermission):
     """
