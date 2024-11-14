@@ -19,7 +19,8 @@ class TrainView(APIView):
 
     def post(self, request, pk):
         # シリアライザーの初期化とバリデーション
-        serializer = TrainSerializer(data={**request.data, 'pk': pk})
+        request.data['pk'] = pk
+        serializer = TrainSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -49,7 +50,8 @@ class PredictView(APIView):
 
     def post(self, request, pk):
         # シリアライザーの初期化とバリデーション
-        serializer = PredictSerializer(data={**request.data, 'pk': pk})
+        request.data['pk'] = pk
+        serializer = PredictSerializer(data=request.data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
