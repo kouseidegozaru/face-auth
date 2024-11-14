@@ -7,12 +7,12 @@ from allauth.account.models import EmailAddress
 from recognizer.models import TrainingData, TrainingGroup
 import os
 import uuid
-from recognizer.tests.tools.clear_test_data import clear_media
+from recognizer.tests.tools.clear_test_data import ClearTrainingDataMixin
 from unittest.mock import patch
 from recognizer.tests.views.Auther import AuthTestMixin
 
 
-class TestTrainingDataViewSet(APITestCase, AuthTestMixin):
+class TestTrainingDataViewSet(ClearTrainingDataMixin, APITestCase, AuthTestMixin):
     def setUp(self):
         # テストユーザーの作成
         self.user = get_user_model().objects.create_user(
@@ -33,11 +33,6 @@ class TestTrainingDataViewSet(APITestCase, AuthTestMixin):
             label='test_label',
             image=SimpleUploadedImage()
         )
-
-
-    def tearDown(self):
-        # 作成した画像ファイルの削除
-        clear_media()
 
     def test_list_training_data(self):
         # TrainingDataの一覧取得テスト

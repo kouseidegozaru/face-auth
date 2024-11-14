@@ -6,11 +6,11 @@ from recognizer.tests.tools.image_generator import SimpleUploadedImage
 from allauth.account.models import EmailAddress
 from recognizer.models import TrainingGroup, TrainingData
 import os
-from recognizer.tests.tools.clear_test_data import clear_media
+from recognizer.tests.tools.clear_test_data import ClearTrainingDataMixin
 from unittest.mock import patch
 from recognizer.tests.views.Auther import AuthTestMixin
 
-class TestGroupDataViewSet(APITestCase, AuthTestMixin):
+class TestGroupDataViewSet(ClearTrainingDataMixin, APITestCase, AuthTestMixin):
     def setUp(self):
         # テストユーザーの作成
         self.user = get_user_model().objects.create_user(
@@ -26,10 +26,6 @@ class TestGroupDataViewSet(APITestCase, AuthTestMixin):
         self.group = TrainingGroup.objects.create(name='test_group', owner=self.user)
         # テスト用の画像
         self.image = SimpleUploadedImage()
-
-    def tearDown(self):
-        # 作成した画像パスを削除
-        clear_media()
 
     @patch('recognizer.serializers.models_serializers.is_exist_face', return_value=True)
     def test_create_group_data(self, mock_is_exist_face):

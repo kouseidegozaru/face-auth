@@ -3,9 +3,9 @@ from django.contrib.auth import get_user_model
 from recognizer.models import TrainingData, TrainingGroup
 from recognizer.tests.tools.image_generator import SimpleUploadedImage
 import os
-from recognizer.tests.tools.clear_test_data import clear_media
+from recognizer.tests.tools.clear_test_data import ClearTrainingDataMixin
 
-class TestTrainingData(TestCase):
+class TestTrainingData(ClearTrainingDataMixin,TestCase):
     def setUp(self):
         # テストユーザーの作成
         self.user = get_user_model().objects.create_user(
@@ -25,10 +25,6 @@ class TestTrainingData(TestCase):
             image=self.random_image,
             label='test_label'
         )
-
-    def tearDown(self):
-        # テスト終了後に生成されたすべての画像ファイルを削除
-        clear_media()
 
     def test_create(self):
         # TrainingDataが1件作成されていることを確認

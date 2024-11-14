@@ -5,11 +5,11 @@ from recognizer.models import TrainingData, TrainingGroup
 from recognizer.serializers.models_serializers import TrainingDataSerializer
 from recognizer.tests.tools.image_generator import SimpleUploadedImage
 import os
-from recognizer.tests.tools.clear_test_data import clear_media
+from recognizer.tests.tools.clear_test_data import ClearTrainingDataMixin
 from unittest.mock import patch
 
 
-class TestTrainingDataSerializer(TestCase):
+class TestTrainingDataSerializer(ClearTrainingDataMixin, TestCase):
 
     def setUp(self):
         # テストユーザーを作成
@@ -26,11 +26,6 @@ class TestTrainingDataSerializer(TestCase):
             image=SimpleUploadedImage(),
             label='test_label'
         )
-
-
-    def tearDown(self):
-        # テスト終了後に生成されたすべての画像ファイルを削除
-        clear_media()
 
     @patch('recognizer.serializers.models_serializers.is_exist_face', return_value=True)
     def test_create(self, mock_is_exist_face):
