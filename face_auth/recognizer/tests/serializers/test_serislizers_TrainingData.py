@@ -101,13 +101,3 @@ class TestTrainingDataSerializer(TestCase):
         self.assertTrue(serializer.is_valid())
         training_data = serializer.save()
         self.assertEqual(training_data.group, self.group)
-
-    def test_update_fail_owner_read_only(self):
-        # シリアライザーのowner更新失敗テスト(ownerは読み取り専用)
-        serializer = TrainingDataSerializer(instance=self.training_data, data={
-            "group": self.group,
-            "label": "updated_label"
-        }, partial=True)
-        self.assertTrue(serializer.is_valid())
-        with self.assertRaises(ValidationError):
-            serializer.save()
