@@ -1,16 +1,29 @@
-import os
 from recognizer.models import TrainingData
-from django.conf import settings
+from django.db.models import Model
 
-def clear_media():
+
+class ClearTestDataMixin:
     """
-    mediaディレクトリのすべてのファイルとディレクトリを削除する
+    テストデータをクリアするためのMixin
+    wornings: 
+        このクラスを多重継承する際は、TestCaseクラスよりも先に記述する
+        (tearDownメソッドがTestCaseクラスの方に上書きされるのを防ぐため)
+    usage:
+        class TestView(ClearTestDataMixin, TestCase):
     """
-    # メディアディレクトリのパスを取得
-    media_dir = settings.MEDIA_ROOT
-    # メディアディレクトリ内のすべてのファイルとディレクトリを削除
-    for root, dirs, files in os.walk(media_dir, topdown=False):
-        for name in files:
-            os.remove(os.path.join(root, name))
-        for name in dirs:
-            os.rmdir(os.path.join(root, name))
+    ClearObjects: list[type[Model]] = []
+
+    def tearDown(self):
+        super().tearDown()
+        self.clear_test_data()
+
+    def clear_test_data(self):
+        for obj in self.ClearObjects:
+            obj.objects.all().delete()
+
+
+class ClearTrainingDataMixin(ClearTestDataMixin):
+    """
+    TrainingDataをクリアするためのMixin
+    """
+    ClearObjects = [TrainingData]
