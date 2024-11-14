@@ -11,9 +11,10 @@ from recognizer.repository.save_model import feature_model_to_binary
 import numpy as np
 import uuid
 from unittest.mock import patch
+from recognizer.tests.views.Auther import AuthTestMixin
 
 
-class TestPredictView(APITestCase):
+class TestPredictView(APITestCase, AuthTestMixin):
     def setUp(self):
         # テストユーザーの作成
         self.user = get_user_model().objects.create_user(
@@ -23,18 +24,8 @@ class TestPredictView(APITestCase):
         )
         # ユーザーのメールアドレスを認証済みに設定
         EmailAddress.objects.create(user=self.user, email=self.user.email, verified=True, primary=True)
-        # 認証トークンの取得
-        response = self.client.post(
-            reverse('custom_login'),
-            {'email': 'test_email@example.com', 'password': 'test_password'},
-            format='json'
-        )
-        self.token = response.data.get("key")
-        if not self.token:
-            raise ValueError('Token retrieval failed')
-        # 認証ヘッダーの設定
-        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token}')
-
+        # 認証トークンの設定
+        self.set_auth_token(self.user, 'test_password')
         # テスト用のTrainingGroupの作成
         self.group = TrainingGroup.objects.create(name='test_group', owner=self.user)
         

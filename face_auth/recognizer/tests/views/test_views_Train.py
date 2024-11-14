@@ -10,8 +10,9 @@ import uuid
 from unittest.mock import patch
 from recognizer.tests.tools.clear_test_data import clear_media
 from recognizer.tests.tools.image_generator import get_test_image_as_bytes
+from recognizer.tests.views.Auther import AuthTestMixin
 
-class TestTrainView(APITestCase):
+class TestTrainView(APITestCase, AuthTestMixin):
 
     def setUp(self):
         # テストユーザーの作成
@@ -43,17 +44,8 @@ class TestTrainView(APITestCase):
 
         # ユーザーのメールアドレスを認証済みに設定
         EmailAddress.objects.create(user=self.user, email=self.user.email, verified=True, primary=True)
-        # 認証トークンの取得
-        response = self.client.post(
-            reverse('custom_login'),
-            {'email': 'test_email@example.com', 'password': 'test_password'},
-            format='json'
-        )
-        self.token = response.data.get("key")
-        if not self.token:
-            raise ValueError('Token retrieval failed')
-        # 認証ヘッダーの設定
-        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token}')
+        # 認証トークンの設定
+        self.set_auth_token(self.user, 'test_password')
 
     def tearDown(self):
         # 削除対象のファイルを削除する

@@ -4,9 +4,10 @@ from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
 from allauth.account.models import EmailAddress
 from recognizer.models import TrainingGroup
+from recognizer.tests.views.Auther import AuthTestMixin
 
 
-class TestTrainingGroupViewSet(APITestCase):
+class TestTrainingGroupViewSet(APITestCase, AuthTestMixin):
 
     def setUp(self):
         self.user = get_user_model().objects.create_user(
@@ -21,17 +22,8 @@ class TestTrainingGroupViewSet(APITestCase):
         )
         # ユーザーのメールアドレスを認証済みに設定
         EmailAddress.objects.create(user=self.user, email=self.user.email, verified=True, primary=True)
-        # 認証トークンの取得
-        response = self.client.post(
-            reverse('custom_login'),
-            {'email': 'test_email@example.com', 'password': 'test_password'},
-            format='json'
-        )
-        self.token = response.data.get("key")
-        if not self.token:
-            raise ValueError('Token retrieval failed')
-        # 認証ヘッダーの設定
-        self.client.credentials(HTTP_AUTHORIZATION=f'Token {self.token}')
+        # 認証トークンの設定
+        self.set_auth_token(self.user, 'test_password')
         
         self.group = TrainingGroup.objects.create(name='test_group', owner=self.user)
 
