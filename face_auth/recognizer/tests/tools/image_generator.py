@@ -14,3 +14,12 @@ def test_image_as_bytes() -> bytes:
     image.save(buf, format='JPEG')
 
     return buf.getvalue()
+
+def SimpleUploadedImage(name='test_image.jpg', 
+                        data=test_image_as_bytes(), 
+                        content_type='image/jpeg'
+                        ) -> SimpleUploadedFile:
+    """
+    テスト用の画像データをSimpleUploadedFile型で返す
+    """
+    return SimpleUploadedFile(name, data, content_type=content_type)
