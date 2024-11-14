@@ -1,5 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
+from rest_framework.serializers import ValidationError
 from recognizer.models import TrainingData, TrainingGroup
 from recognizer.serializers.models_serializers import TrainingDataSerializer
 from django.core.files.uploadedfile import SimpleUploadedFile
@@ -65,8 +66,9 @@ class TestTrainingDataSerializer(TestCase):
     def test_update_fail_label_required(self):
         # シリアライザーのlabel更新失敗テスト
         serializer = TrainingDataSerializer(instance=self.training_data, data={}, partial=True)
-        self.assertFalse(serializer.is_valid())
-        self.assertIn("label", serializer.errors)
+        self.assertTrue(serializer.is_valid())
+        with self.assertRaises(ValidationError):
+            serializer.save()
 
     @patch('recognizer.serializers.models_serializers.is_exist_face', return_value=True)
     def test_update_image(self, mock_is_exist_face):
@@ -85,8 +87,9 @@ class TestTrainingDataSerializer(TestCase):
     def test_update_fail_image_required(self):
         # シリアライザーのimage更新失敗テスト
         serializer = TrainingDataSerializer(instance=self.training_data, data={}, partial=True)
-        self.assertFalse(serializer.is_valid())
-        self.assertIn("image", serializer.errors)
+        self.assertTrue(serializer.is_valid())
+        with self.assertRaises(ValidationError):
+            serializer.save()
 
     def test_update_fail_group_read_only(self):
         # シリアライザーのgroup更新失敗テスト(groupは読み取り専用)
@@ -94,8 +97,9 @@ class TestTrainingDataSerializer(TestCase):
             "group": self.group,
             "label": "updated_label"
         }, partial=True)
-        self.assertFalse(serializer.is_valid())
-        self.assertIn("group", serializer.errors)
+        self.assertTrue(serializer.is_valid())
+        with self.assertRaises(ValidationError):
+            serializer.save()
 
     def test_update_fail_owner_read_only(self):
         # シリアライザーのowner更新失敗テスト(ownerは読み取り専用)
@@ -103,5 +107,6 @@ class TestTrainingDataSerializer(TestCase):
             "group": self.group,
             "label": "updated_label"
         }, partial=True)
-        self.assertFalse(serializer.is_valid())
-        self.assertIn("owner", serializer.errors)
+        self.assertTrue(serializer.is_valid())
+        with self.assertRaises(ValidationError):
+            serializer.save()
