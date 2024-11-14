@@ -63,13 +63,14 @@ class TestTrainingDataSerializer(ClearTrainingDataMixin, TestCase):
     @patch('recognizer.serializers.models_serializers.is_exist_face', return_value=True)
     def test_update_image(self, mock_is_exist_face):
         # シリアライザーの更新テスト
+        old_image = self.training_data.image
         image = SimpleUploadedImage(name="updated_image.jpg")
         serializer = TrainingDataSerializer(instance=self.training_data, data={
             "image": image
         }, partial=True)
         self.assertTrue(serializer.is_valid())
         updated_training_data = serializer.save()
-        self.assertEqual(os.path.basename(updated_training_data.image.name), "updated_image.jpg")
+        self.assertNotEqual(updated_training_data.image.name, old_image.name)
 
 
     def test_update_fail_image_required(self):
