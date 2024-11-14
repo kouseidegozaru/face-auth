@@ -12,15 +12,18 @@ class TestPredict(TestCase):
 
     @patch('recognizer.services.recognize.recognize.face_recognition.face_encodings', return_value=[np.random.rand(10)])
     def test_predict_feature(self, mock_face_encodings):
+        # 推論が成功するか
         feature = predict_feature(self.feature_model, self.opened_image)
         self.assertIsInstance(feature, str)
 
     @patch('recognizer.services.recognize.recognize.face_recognition.face_encodings', return_value=[np.random.rand(10)])
     def test_predict_feature_no_feature_model(self, mock_face_encodings):
+        # 特徴モデルがNoneの場合、例外が発生するか
         with self.assertRaises(AttributeError):
             feature = predict_feature(None, self.opened_image)
 
     @patch('recognizer.services.recognize.recognize.face_recognition.face_encodings', return_value=[np.random.rand(10)])
     def test_predict_feature_no_image(self, mock_face_encodings):
+        # 画像がNoneの場合、例外が発生するか
         with self.assertRaises(ValueError):
             feature = predict_feature(self.feature_model, None)
