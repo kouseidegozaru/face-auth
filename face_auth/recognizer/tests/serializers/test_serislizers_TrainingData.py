@@ -5,6 +5,7 @@ from recognizer.serializers.models_serializers import TrainingDataSerializer
 from django.core.files.uploadedfile import SimpleUploadedFile
 import os
 from recognizer.tests.tools.clear_test_data import clear_media
+from recognizer.tests.tools.image_generator import get_test_image_as_bytes
 
 
 class TestTrainingDataSerializer(TestCase):
@@ -22,7 +23,7 @@ class TestTrainingDataSerializer(TestCase):
         self.training_data = TrainingData.objects.create(
             group=self.group,
             image=SimpleUploadedFile(
-                "test_image.jpg", b"random_image_data", content_type="image/jpeg"
+                "test_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg"
             ),
             label='test_label'
         )
@@ -37,7 +38,7 @@ class TestTrainingDataSerializer(TestCase):
         serializer = TrainingDataSerializer(data={
             "group": self.group,
             "image": SimpleUploadedFile(
-                "test_image.jpg", b"random_image_data", content_type="image/jpeg"
+                "test_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg"
             ),
             "label": "test_label"
         })
@@ -68,7 +69,7 @@ class TestTrainingDataSerializer(TestCase):
     def test_update_image(self):
         # シリアライザーの更新テスト
         image = SimpleUploadedFile(
-            "updated_image.jpg", b"updated_image_data", content_type="image/jpeg"
+            "updated_image.jpg", get_test_image_as_bytes(), content_type="image/jpeg"
         )
         serializer = TrainingDataSerializer(instance=self.training_data, data={
             "image": image
