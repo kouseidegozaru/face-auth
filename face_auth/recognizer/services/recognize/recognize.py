@@ -4,7 +4,7 @@ import face_recognition
 
 from recognizer.services.recognize.types import LearningDataSet
 from recognizer.services.tools.image_operations import open_image
-from recognizer.services.recognize.feature_models import FeatureModel
+from recognizer.services.recognize.feature_models import FeatureModel, PredictResult
 
 
 def train_feature(data_set: LearningDataSet) -> FeatureModel:
@@ -88,7 +88,7 @@ def extract_face_feature(face_image: np.ndarray) -> np.ndarray:
         return None
 
 
-def predict_feature(feature_model: FeatureModel, face_image: np.ndarray) -> str:
+def predict_feature(feature_model: FeatureModel, face_image: np.ndarray) -> PredictResult:
     """
     入力された特徴モデルと顔画像から、顔画像に対する顔特徴を推定して返す
 
