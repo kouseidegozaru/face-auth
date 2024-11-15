@@ -176,6 +176,8 @@ DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 
 #カスタムユーザー設定
 AUTH_USER_MODEL = 'accounts.User'
+# ユーザーアダプター
+ACCOUNT_ADAPTER = 'accounts.adapters.CustomAccountAdapter'
 
-#メール認証後のリダイレクト先URL(フロントエンドのURLを指定)
-VERIFY_EMAIL_REDIRECT_URL = '/users/login/'#テスト用リダイレクト先
+# メール認証メールに添付するurl(keyは必須)(DUBUG時はaccount-confirm-emailに置き換わる)
+ACCOUNT_EMAIL_CONFIRMATION_URL = 'https://localhost:8000/your-frontend/verify-email/{key}'# フロントエンドのメール認証URL
