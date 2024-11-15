@@ -68,9 +68,11 @@ class PredictView(APIView):
             # 特徴モデルの読み込み
             feature_model = load_feature_model(group.id)
             # 推論
-            result_label = predict_feature(feature_model, image_data)
+            result = predict_feature(feature_model, image_data)
+            # JSON形式に変換
+            result_json = {"label": result.label, "distance": result.distance}
 
-            return Response(result_label)
+            return Response(result_json, status=status.HTTP_200_OK)
         
         except Exception as e:
             return Response(str(e), status=status.HTTP_400_BAD_REQUEST)

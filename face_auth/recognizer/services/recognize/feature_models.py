@@ -4,6 +4,13 @@ import numpy as np
 from sklearn.neighbors import NearestNeighbors
 
 
+class PredictResult:
+    """推論結果を保持するクラス"""
+    def __init__(self, label: str, distance: float):
+        self.label = label
+        self.distance = distance
+
+
 class FeatureModel:
     """学習後の特徴モデルを保持するクラス"""
 
@@ -11,9 +18,10 @@ class FeatureModel:
         self.model = model
         self.labels = labels
 
-    def predict(self, face_feature : np.ndarray) -> str:
+    def predict(self, face_feature : np.ndarray) -> PredictResult:
         distances, indices = self.model.kneighbors(face_feature.reshape(1, -1))
-        return self.labels[indices[0][0]]
+        predict_result = PredictResult(self.labels[indices[0][0]], distances[0][0])
+        return predict_result
     
 
 class FeatureModelStorage:
