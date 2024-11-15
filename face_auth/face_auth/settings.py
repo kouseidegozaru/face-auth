@@ -176,3 +176,5 @@ DEFAULT_FROM_EMAIL = env('DEFAULT_FROM_EMAIL')
 
 #カスタムユーザー設定
 AUTH_USER_MODEL = 'accounts.User'
+# ユーザーアダプター
+ACCOUNT_ADAPTER = 'accounts.adapters.CustomAccountAdapter'
