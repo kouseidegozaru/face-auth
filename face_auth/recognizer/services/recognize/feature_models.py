@@ -4,6 +4,13 @@ import numpy as np
 from sklearn.neighbors import NearestNeighbors
 
 
+class PredictResult:
+    """推論結果を保持するクラス"""
+    def __init__(self, label: str, distance: float):
+        self.label = label
+        self.distance = distance
+
+
 class FeatureModel:
     """学習後の特徴モデルを保持するクラス"""
 
