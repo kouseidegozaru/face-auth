@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'accounts',
     'recognizer',
+    'documentation',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
