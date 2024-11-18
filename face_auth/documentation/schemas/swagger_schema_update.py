@@ -39,3 +39,33 @@ def find_subclasses_in_path(base_class: Type, path: str) -> List[Type]:
                 subclasses.append(obj)
 
     return subclasses
+
+
+class SubClassesRunner(ABC):
+    """
+    このクラスを継承したクラスのrunメソッドを実行する
+    """
+
+    @abstractmethod
+    def run(self):
+        """
+        このクラスを継承したクラスは
+        runメソッドをオーバーライドする
+        """
+        pass
+
+    @classmethod
+    def run_for_subclasses(cls, subclasses_import_paths: list[str]=None):
+        """
+        このクラスを継承したクラスのrunメソッドを実行する
+        args:
+            subclasses_import_paths: サブクラスが定義されているインポートパスのリスト
+        """
+        if subclasses_import_paths is None:
+            subclasses_import_paths = []
+
+        for subclass_import_path in subclasses_import_paths:
+            subclasses = find_subclasses_in_path(cls, subclass_import_path)
+            for subclass in subclasses:
+                subclass.run()
+
