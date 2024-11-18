@@ -69,3 +69,24 @@ class SubClassesRunner(ABC):
             for subclass in subclasses:
                 subclass.run()
 
+
+class SwaggerSchemaUpdater(SubClassesRunner):
+
+    @abstractmethod
+    def run():
+        """
+        Swaggerの拡張情報をこのメソッドに記載する
+        usage:
+            def run():
+                YourViewSet.your_method = swagger_auto_schema(
+                    operation_summary="this summary",
+                    operation_description="this description",
+                    responses={200: openapi.Response('success'), 404: openapi.Response('Not Found')},
+                )(YourViewSet.your_method)
+                
+                YourViewSet.your_method2 = swagger_auto_schema(
+                    operation_summary="this summary",
+                ...
+                    
+        """
+        super().run()
