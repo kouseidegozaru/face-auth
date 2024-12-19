@@ -25,7 +25,8 @@ class TrainingData(SwaggerSchemaUpdater):
             operation_summary="指定のgroupにTrainingDataを作成",
             operation_description="指定のgroupにTrainingDataを作成します。",
             manual_parameters=[openapi.Parameter('Authorization', openapi.IN_HEADER, description="認証トークン", type=openapi.TYPE_STRING),
-                               openapi.Parameter('X-CSRFToken', openapi.IN_HEADER, description="csrfトークン", type=openapi.TYPE_STRING),],
+                               openapi.Parameter('X-CSRFToken', openapi.IN_HEADER, description="csrfトークン", type=openapi.TYPE_STRING),
+                               openapi.Parameter('csrftoken', 'cookie', description="csrfトークン", type=openapi.TYPE_STRING),],
             request_body=openapi.Schema(
                     type=openapi.TYPE_OBJECT,
                     properties={
