@@ -35,7 +35,8 @@ class TrainingGroup(SwaggerSchemaUpdater):
         TrainingGroupViewSet.create = swagger_auto_schema(
             operation_summary="TrainingGroupを作成",
             operation_description="TrainingGroupを作成します。",
-            manual_parameters=[openapi.Parameter('Authorization', openapi.IN_HEADER, description="認証トークン", type=openapi.TYPE_STRING),],
+            manual_parameters=[openapi.Parameter('Authorization', openapi.IN_HEADER, description="認証トークン", type=openapi.TYPE_STRING),
+                               openapi.Parameter('X-CSRFToken', openapi.IN_HEADER, description="csrfトークン", type=openapi.TYPE_STRING),],
             request_body=TrainingGroupSerializer(),
             responses={201: openapi.Response('成功'),
                        400: openapi.Response('シリアライザーエラー'),
@@ -48,7 +49,8 @@ class TrainingGroup(SwaggerSchemaUpdater):
         TrainingGroupViewSet.update = swagger_auto_schema(
             operation_summary="特定のTrainingGroupを更新",
             operation_description="特定のTrainingGroupを更新します。",
-            manual_parameters=[openapi.Parameter('Authorization', openapi.IN_HEADER, description="認証トークン", type=openapi.TYPE_STRING),],
+            manual_parameters=[openapi.Parameter('Authorization', openapi.IN_HEADER, description="認証トークン", type=openapi.TYPE_STRING),
+                               openapi.Parameter('X-CSRFToken', openapi.IN_HEADER, description="csrfトークン", type=openapi.TYPE_STRING),],
             request_body=TrainingGroupSerializer(),
             responses={200: openapi.Response(schema=TrainingGroupSerializer(), description='成功'),
                        400: openapi.Response('シリアライザーエラー'),
@@ -60,7 +62,8 @@ class TrainingGroup(SwaggerSchemaUpdater):
         TrainingGroupViewSet.destroy = swagger_auto_schema(
             operation_summary="特定のTrainingGroupを削除",
             operation_description="特定のTrainingGroupを削除します。",
-            manual_parameters=[openapi.Parameter('Authorization', openapi.IN_HEADER, description="認証トークン", type=openapi.TYPE_STRING),],
+            manual_parameters=[openapi.Parameter('Authorization', openapi.IN_HEADER, description="認証トークン", type=openapi.TYPE_STRING),
+                               openapi.Parameter('X-CSRFToken', openapi.IN_HEADER, description="csrfトークン", type=openapi.TYPE_STRING),],
             responses={204: openapi.Response('成功'),
                        400: openapi.Response('シリアライザーエラー'),
                        403: openapi.Response('未認証のユーザー'),
