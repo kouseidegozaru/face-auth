@@ -36,6 +36,10 @@ paths:
         in: header
         description: 認証トークン
         type: string
+      - name: X-CSRFToken
+        in: header
+        description: csrfトークン
+        type: string
       responses:
         '201':
           description: 成功
@@ -63,6 +67,10 @@ paths:
       - name: Authorization
         in: header
         description: 認証トークン
+        type: string
+      - name: X-CSRFToken
+        in: header
+        description: csrfトークン
         type: string
       responses:
         '200':
@@ -145,6 +153,10 @@ paths:
         in: header
         description: 認証トークン
         type: string
+      - name: X-CSRFToken
+        in: header
+        description: csrfトークン
+        type: string
       responses:
         '200':
           description: 成功
@@ -166,6 +178,10 @@ paths:
       - name: Authorization
         in: header
         description: 認証トークン
+        type: string
+      - name: X-CSRFToken
+        in: header
+        description: csrfトークン
         type: string
       responses:
         '204':
@@ -217,6 +233,10 @@ paths:
       - name: Authorization
         in: header
         description: 認証トークン
+        type: string
+      - name: X-CSRFToken
+        in: header
+        description: csrfトークン
         type: string
       responses:
         '201':
@@ -271,6 +291,10 @@ paths:
         in: header
         description: 認証トークン
         type: string
+      - name: X-CSRFToken
+        in: header
+        description: csrfトークン
+        type: string
       responses:
         '201':
           description: 成功
@@ -322,6 +346,10 @@ paths:
         in: header
         description: 認証トークン
         type: string
+      - name: X-CSRFToken
+        in: header
+        description: csrfトークン
+        type: string
       responses:
         '200':
           description: 成功
@@ -344,6 +372,10 @@ paths:
         in: header
         description: 認証トークン
         type: string
+      - name: X-CSRFToken
+        in: header
+        description: csrfトークン
+        type: string
       responses:
         '204':
           description: 成功
@@ -360,6 +392,23 @@ paths:
       in: path
       required: true
       type: string
+  /users/csrf-token/:
+    get:
+      operationId: users_csrf-token_list
+      summary: csrfトークンを発行します
+      description: csrfトークンを発行します。
+      parameters: []
+      responses:
+        '200':
+          description: 成功
+          schema:
+            type: object
+            properties:
+              csrfToken:
+                type: string
+      tags:
+      - users
+    parameters: []
   /users/login/:
     post:
       operationId: users_login_create
@@ -507,6 +556,38 @@ paths:
       - users
     parameters:
     - name: key
+      in: path
+      required: true
+      type: string
+  /users/registration/password/reset/confirm/{uidb64}/{token}/:
+    post:
+      operationId: users_registration_password_reset_confirm_create
+      summary: |-
+        Password reset e-mail link is confirmed, therefore
+        this resets the user's password.
+      description: |-
+        Accepts the following POST parameters: token, uid,
+            new_password1, new_password2
+        Returns the success/fail message.
+      parameters:
+      - name: data
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/PasswordResetConfirm'
+      responses:
+        '201':
+          description: ''
+          schema:
+            $ref: '#/definitions/PasswordResetConfirm'
+      tags:
+      - users
+    parameters:
+    - name: uidb64
+      in: path
+      required: true
+      type: string
+    - name: token
       in: path
       required: true
       type: string
