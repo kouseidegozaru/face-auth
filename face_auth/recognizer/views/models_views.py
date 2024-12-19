@@ -6,10 +6,11 @@ from rest_framework import status, viewsets
 from rest_framework.decorators import action
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from accounts.permissions import PostHasCsrfTokenNonGetMethod
 
 
 class TrainingGroupViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated, IsGroupOwnerOnly]
+    permission_classes = [IsAuthenticated, IsGroupOwnerOnly, PostHasCsrfTokenNonGetMethod]
 
     # すべてのグループを取得
     def list(self, request):
@@ -48,7 +49,7 @@ class TrainingGroupViewSet(viewsets.ViewSet):
 
 
 class TrainingDataViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated, IsGroupDataOwnerOnly]
+    permission_classes = [IsAuthenticated, IsGroupDataOwnerOnly, PostHasCsrfTokenNonGetMethod]
 
     # すべての画像データを取得
     def list(self, request):
@@ -79,7 +80,7 @@ class TrainingDataViewSet(viewsets.ViewSet):
 
 
 class GroupDataViewSet(viewsets.ViewSet):
-    permission_classes = [IsAuthenticated, IsGroupOwnerOnly]
+    permission_classes = [IsAuthenticated, IsGroupOwnerOnly, PostHasCsrfTokenNonGetMethod]
 
     # 特定のグループのすべての画像を取得
     @action(detail=True, methods=["get"], url_path="images")
