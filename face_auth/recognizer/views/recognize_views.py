@@ -11,11 +11,12 @@ from rest_framework import status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from accounts.permissions import PostHasCsrfTokenNonGetMethod
 
 
 class TrainView(APIView):
     # 認証済みのユーザーのみアクセス可能
-    permission_classes = [IsAuthenticated, IsGroupOwnerOnly]
+    permission_classes = [IsAuthenticated, IsGroupOwnerOnly, PostHasCsrfTokenNonGetMethod]
 
     def post(self, request, pk):
         # シリアライザーの初期化とバリデーション
@@ -46,7 +47,7 @@ class TrainView(APIView):
 
 
 class PredictView(APIView):
-    permission_classes = [IsAuthenticated, IsGroupOwnerOnly]
+    permission_classes = [IsAuthenticated, IsGroupOwnerOnly, PostHasCsrfTokenNonGetMethod]
 
     def post(self, request, pk):
         # シリアライザーの初期化とバリデーション
