@@ -2,12 +2,12 @@ from allauth.account.models import EmailAddress
 from django.contrib.auth import get_user_model
 from django.urls import reverse
 from recognizer.models import TrainingGroup
-from recognizer.tests.views.Auther import AuthTestMixin
+from recognizer.tests.views.Auther import AuthTestMixin, CsrfTestMixin
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 
-class TestTrainingGroupViewSet(APITestCase, AuthTestMixin):
+class TestTrainingGroupViewSet(APITestCase, AuthTestMixin, CsrfTestMixin):
 
     def setUp(self):
         self.user = get_user_model().objects.create_user(
@@ -24,6 +24,8 @@ class TestTrainingGroupViewSet(APITestCase, AuthTestMixin):
         EmailAddress.objects.create(user=self.user, email=self.user.email, verified=True, primary=True)
         # 認証トークンの設定
         self.set_auth_token(self.user, 'test_password')
+        # csrfトークンの設定
+        self.set_csrf_token()
         
         self.group = TrainingGroup.objects.create(name='test_group', owner=self.user)
 
