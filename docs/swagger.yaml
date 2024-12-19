@@ -40,6 +40,10 @@ paths:
         in: header
         description: csrfトークン
         type: string
+      - name: csrftoken
+        in: cookie
+        description: csrfトークン
+        type: string
       responses:
         '201':
           description: 成功
@@ -70,6 +74,10 @@ paths:
         type: string
       - name: X-CSRFToken
         in: header
+        description: csrfトークン
+        type: string
+      - name: csrftoken
+        in: cookie
         description: csrfトークン
         type: string
       responses:
@@ -157,6 +165,10 @@ paths:
         in: header
         description: csrfトークン
         type: string
+      - name: csrftoken
+        in: cookie
+        description: csrfトークン
+        type: string
       responses:
         '200':
           description: 成功
@@ -181,6 +193,10 @@ paths:
         type: string
       - name: X-CSRFToken
         in: header
+        description: csrfトークン
+        type: string
+      - name: csrftoken
+        in: cookie
         description: csrfトークン
         type: string
       responses:
@@ -236,6 +252,10 @@ paths:
         type: string
       - name: X-CSRFToken
         in: header
+        description: csrfトークン
+        type: string
+      - name: csrftoken
+        in: cookie
         description: csrfトークン
         type: string
       responses:
@@ -295,6 +315,10 @@ paths:
         in: header
         description: csrfトークン
         type: string
+      - name: csrftoken
+        in: cookie
+        description: csrfトークン
+        type: string
       responses:
         '201':
           description: 成功
@@ -350,6 +374,10 @@ paths:
         in: header
         description: csrfトークン
         type: string
+      - name: csrftoken
+        in: cookie
+        description: csrfトークン
+        type: string
       responses:
         '200':
           description: 成功
@@ -374,6 +402,10 @@ paths:
         type: string
       - name: X-CSRFToken
         in: header
+        description: csrfトークン
+        type: string
+      - name: csrftoken
+        in: cookie
         description: csrfトークン
         type: string
       responses:
