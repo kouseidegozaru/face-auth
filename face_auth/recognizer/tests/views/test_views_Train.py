@@ -8,12 +8,12 @@ from django.urls import reverse
 from recognizer.models import TrainingData, TrainingGroup
 from recognizer.tests.tools.clear_test_data import ClearTrainingDataMixin
 from recognizer.tests.tools.image_generator import SimpleUploadedImage
-from recognizer.tests.views.Auther import AuthTestMixin
+from recognizer.tests.views.Auther import AuthTestMixin, CsrfTestMixin
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 
-class TestTrainView(ClearTrainingDataMixin, APITestCase, AuthTestMixin):
+class TestTrainView(ClearTrainingDataMixin, APITestCase, AuthTestMixin, CsrfTestMixin):
 
     def setUp(self):
         # テストユーザーの作成
@@ -43,6 +43,8 @@ class TestTrainView(ClearTrainingDataMixin, APITestCase, AuthTestMixin):
         EmailAddress.objects.create(user=self.user, email=self.user.email, verified=True, primary=True)
         # 認証トークンの設定
         self.set_auth_token(self.user, 'test_password')
+        # csrfトークンの設定
+        self.set_csrf_token()
 
     @patch('recognizer.services.recognize.recognize.detect_face', side_effect=lambda image: image)
     @patch('recognizer.services.recognize.recognize.extract_face_feature', return_value=np.random.rand(10))
