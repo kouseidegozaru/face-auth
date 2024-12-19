@@ -9,12 +9,12 @@ from recognizer.models import FeatureData, TrainingGroup
 from recognizer.repository.save_model import feature_model_to_binary
 from recognizer.tests.tools.feature_model_generator import get_random_feature_model
 from recognizer.tests.tools.image_generator import SimpleUploadedImage
-from recognizer.tests.views.Auther import AuthTestMixin
+from recognizer.tests.views.Auther import AuthTestMixin, CsrfTestMixin
 from rest_framework import status
 from rest_framework.test import APITestCase
 
 
-class TestPredictView(APITestCase, AuthTestMixin):
+class TestPredictView(APITestCase, AuthTestMixin, CsrfTestMixin):
     def setUp(self):
         # テストユーザーの作成
         self.user = get_user_model().objects.create_user(
@@ -26,6 +26,8 @@ class TestPredictView(APITestCase, AuthTestMixin):
         EmailAddress.objects.create(user=self.user, email=self.user.email, verified=True, primary=True)
         # 認証トークンの設定
         self.set_auth_token(self.user, 'test_password')
+        # csrfトークンの設定
+        self.set_csrf_token()
         # テスト用のTrainingGroupの作成
         self.group = TrainingGroup.objects.create(name='test_group', owner=self.user)
         

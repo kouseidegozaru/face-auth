@@ -35,7 +35,6 @@ INSTALLED_APPS = [
     'corsheaders',
     'accounts',
     'recognizer',
-    'documentation',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
@@ -43,7 +42,6 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'dj_rest_auth',
     'dj_rest_auth.registration',
-    'drf_yasg',
 ]
 
 MIDDLEWARE = [
@@ -183,8 +181,3 @@ ACCOUNT_ADAPTER = 'accounts.adapters.CustomAccountAdapter'
 
 # メール認証メールに添付するurl(keyは必須)(DUBUG時はaccount-confirm-emailに置き換わる)
 ACCOUNT_EMAIL_CONFIRMATION_URL = 'https://localhost:8000/your-frontend/verify-email/{key}'# フロントエンドのメール認証URL
-
-# swaggerのスキーマ情報が記載されているモジュール
-SWAGGER_SCHEMA_UPDATERS = [
-    'documentation.schemas'
-]
