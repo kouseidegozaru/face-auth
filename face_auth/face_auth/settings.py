@@ -183,5 +183,5 @@ ACCOUNT_ADAPTER = 'accounts.adapters.CustomAccountAdapter'
 FRONTEND_URL = env('FRONTEND_URL')
 # メール認証メールに添付するurl(keyは必須)(DUBUG時はaccount-confirm-emailに置き換わる)(Adapterでこのurlを反映している)
 ACCOUNT_EMAIL_CONFIRMATION_URL = FRONTEND_URL + '/your-frontend/verify-email/{key}'# フロントエンドのメール認証URL
-# パスワードリセットメールに添付するurl(CustomPasswordResetSerializerとでこのurlを反映している)
-ACCOUNT_PASSWORD_RESET_CONFIRM_URL = FRONTEND_URL + '/your-frontend/reset-password/'
+# パスワードリセットメールに添付するurl(メールテンプレートでこのurlを反映している)
+ACCOUNT_PASSWORD_RESET_CONFIRM_URL = FRONTEND_URL + '/your-frontend/reset-password/{uid}/{token}'# フロントエンドのパスワードリセットURL
