@@ -179,5 +179,9 @@ AUTH_USER_MODEL = 'accounts.User'
 # ユーザーアダプター
 ACCOUNT_ADAPTER = 'accounts.adapters.CustomAccountAdapter'
 
-# メール認証メールに添付するurl(keyは必須)(DUBUG時はaccount-confirm-emailに置き換わる)
-ACCOUNT_EMAIL_CONFIRMATION_URL = 'https://localhost:8000/your-frontend/verify-email/{key}'# フロントエンドのメール認証URL
+## フロントエンド TODO: 環境変数に置く
+FRONTEND_URL = 'http://localhost:3000'
+# メール認証メールに添付するurl(keyは必須)(DUBUG時はaccount-confirm-emailに置き換わる)(Adapterでこのurlを反映している)
+ACCOUNT_EMAIL_CONFIRMATION_URL = FRONTEND_URL + '/your-frontend/verify-email/{key}'# フロントエンドのメール認証URL
+# パスワードリセットメールに添付するurl(CustomPasswordResetSerializerとでこのurlを反映している)
+ACCOUNT_PASSWORD_RESET_CONFIRM_URL = FRONTEND_URL + '/your-frontend/reset-password/'
