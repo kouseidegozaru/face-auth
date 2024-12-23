@@ -61,7 +61,7 @@ ROOT_URLCONF = 'face_auth.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR, 'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -179,5 +179,9 @@ AUTH_USER_MODEL = 'accounts.User'
 # ユーザーアダプター
 ACCOUNT_ADAPTER = 'accounts.adapters.CustomAccountAdapter'
 
-# メール認証メールに添付するurl(keyは必須)(DUBUG時はaccount-confirm-emailに置き換わる)
-ACCOUNT_EMAIL_CONFIRMATION_URL = 'https://localhost:8000/your-frontend/verify-email/{key}'# フロントエンドのメール認証URL
+## フロントエンド
+FRONTEND_URL = env('FRONTEND_URL')
+# メール認証メールに添付するurl(keyは必須)(DUBUG時はaccount-confirm-emailに置き換わる)(Adapterでこのurlを反映している)
+ACCOUNT_EMAIL_CONFIRMATION_URL = FRONTEND_URL + '/accounts/register/email/{key}'# フロントエンドのメール認証URL
+# パスワードリセットメールに添付するurl(メールテンプレートでこのurlを反映している)
+ACCOUNT_PASSWORD_RESET_CONFIRM_URL = FRONTEND_URL + '/accounts/password/reset/{uid}/{token}'# フロントエンドのパスワードリセットURL
