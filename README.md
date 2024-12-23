@@ -61,6 +61,7 @@ APIのエンドポイントについては以下に記載しています。
    SECRET_KEY=yourdjangosecretkey
    ALLOWED_HOSTS=localhost,127.0.0.1,yourallowedhosts
    CORS_ALLOWED_ORIGINS=http://localhost:3000,yourallowedhosts
+   FRONTEND_URL=http://localhost:3000
    
    DEFAULT_FROM_EMAIL=youremailaddress
    EMAIL_HOST=youremailhost
